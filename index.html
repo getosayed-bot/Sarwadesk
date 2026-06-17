@@ -612,8 +612,7 @@ function saveApiKey() {
   _apiKey = key;
   try { localStorage.setItem('av_key', key); } catch(e) {}
   $('api-key-bar').classList.add('hidden');
-  refreshAll();
-  fetchMarket();
+  setTimeout(() => { refreshAll(); fetchMarket(); }, 100);
 }
 function checkApiKey() {
   const key = getApiKey();
