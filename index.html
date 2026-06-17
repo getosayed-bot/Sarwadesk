@@ -246,7 +246,7 @@ td{padding:13px 14px;font-size:13px;vertical-align:middle}
   <div class="mkt-context" id="mkt-context-card">
     <div class="mkt-ctx-left">
       <div class="mkt-ctx-badge">
-        <div class="mkt-ctx-name">NASDAQ Composite ^IXIC</div>
+        <div class="mkt-ctx-name">NASDAQ via QQQ ETF</div>
         <div class="mkt-ctx-val" id="mktc-price">—</div>
         <div class="mkt-ctx-chg" id="mktc-chg">—</div>
       </div>
@@ -563,12 +563,15 @@ async function fetchMarket() {
   const key = getApiKey();
   if (!key) { $('mkt-status-text').textContent = 'Enter API key to see live data'; return; }
   try {
-    const url = `https://www.alphavantage.co/query?function=GLOBAL_QUOTE&symbol=%5EIXIC&apikey=${key}`;
+    const url = `https://www.alphavantage.co/query?function=GLOBAL_QUOTE&symbol=QQQ&apikey=${key}`;
     const r = await fetch(url);
     if (!r.ok) throw new Error('HTTP ' + r.status);
     const d = await r.json();
     const q = d && d['Global Quote'];
-    if (!q || !q['05. price']) throw new Error('Invalid response — check API key');
+    if (!q || !q['05. price']) {
+      console.error('AV response:', JSON.stringify(d));
+      throw new Error('Empty response — free tier limit or invalid key');
+    }
     const price = parseFloat(q['05. price']);
     const prev = parseFloat(q['08. previous close']);
     const change = parseFloat(q['09. change']);
