@@ -2,11 +2,11 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
 <title>SarwaDesk</title>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
-*{box-sizing:border-box;margin:0;padding:0}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
 :root{
   --bg:#f7f8fa;--white:#fff;--border:#e8eaed;--border-lt:#f0f2f5;
   --text:#0a0a0a;--muted:#6b7280;--hint:#9ca3af;
@@ -17,48 +17,77 @@
   --amber:#d97706;--amber-bg:#fffbeb;
   --r:12px;--rs:8px;
 }
-body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);font-size:14px;min-height:100vh}
+body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);font-size:14px;min-height:100vh;overflow-x:hidden}
 
-/* TOPBAR */
-.topbar{background:var(--white);border-bottom:1px solid var(--border);padding:0 28px;display:flex;align-items:center;justify-content:space-between;height:58px;position:sticky;top:0;z-index:200}
-.logo{font-size:15px;font-weight:700;display:flex;align-items:center;gap:8px}
-.logo-dot{width:8px;height:8px;background:var(--green);border-radius:50%}
-.nav-tabs{display:flex;gap:2px}
-.nav-tab{padding:7px 15px;font-size:13px;font-weight:500;color:var(--muted);border:none;background:none;cursor:pointer;border-radius:var(--rs);transition:all .15s;font-family:'Inter',sans-serif}
-.nav-tab:hover{background:var(--bg);color:var(--text)}
-.nav-tab.active{background:var(--text);color:#fff}
-.topbar-right{display:flex;gap:8px;align-items:center}
-.icon-btn{display:flex;align-items:center;gap:6px;padding:7px 13px;font-size:12px;font-weight:500;border:1px solid var(--border);border-radius:var(--rs);background:var(--white);color:var(--muted);cursor:pointer;transition:all .15s;font-family:'Inter',sans-serif}
-.icon-btn:hover{background:var(--bg);color:var(--text)}
+/* ── TOPBAR ── */
+.topbar{background:var(--white);border-bottom:1px solid var(--border);padding:0 16px;display:flex;align-items:center;justify-content:space-between;height:52px;position:sticky;top:0;z-index:200}
+.logo{font-size:15px;font-weight:700;display:flex;align-items:center;gap:7px;flex-shrink:0}
+.logo-dot{width:7px;height:7px;background:var(--green);border-radius:50%}
+.share-banner{background:var(--blue-bg);border-bottom:1px solid #bfdbfe;padding:8px 16px;display:flex;flex-wrap:wrap;align-items:center;gap:6px;font-size:11px}
+.share-banner.hidden{display:none}
+.share-text{color:var(--blue-text);flex:1;min-width:200px}
+.share-link{color:var(--blue);font-weight:600;word-break:break-all;font-size:11px}
+.refresh-btn{display:flex;align-items:center;gap:5px;padding:7px 11px;font-size:12px;font-weight:500;border:1px solid var(--border);border-radius:var(--rs);background:var(--white);color:var(--muted);cursor:pointer;white-space:nowrap;flex-shrink:0}
+.refresh-btn:active{background:var(--bg)}
 
-/* PAGES */
-.page{display:none;padding:24px 28px;max-width:1200px;margin:0 auto}
+/* ── BOTTOM NAV (mobile) ── */
+.bottom-nav{position:fixed;bottom:0;left:0;right:0;background:var(--white);border-top:1px solid var(--border);display:flex;z-index:200;padding-bottom:env(safe-area-inset-bottom)}
+.bnav-btn{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;padding:8px 4px;font-size:10px;font-weight:500;color:var(--hint);border:none;background:none;cursor:pointer;font-family:'Inter',sans-serif;min-height:54px}
+.bnav-btn.active{color:var(--blue)}
+.bnav-icon{font-size:18px;line-height:1}
+.bnav-btn.active .bnav-icon{color:var(--blue)}
+
+/* ── API BAR ── */
+.api-bar{background:#fffbeb;border-bottom:1px solid #fde68a;padding:10px 16px;display:flex;flex-wrap:wrap;align-items:center;gap:8px;font-size:12px}
+.api-bar.hidden{display:none}
+.api-bar-label{font-weight:600;color:#92400e;width:100%}
+.api-bar input{flex:1;min-width:0;padding:8px 10px;font-size:13px;font-family:'Inter',sans-serif;border:1px solid #fde68a;border-radius:6px;background:#fff;color:var(--text);outline:none}
+.api-bar-btn{padding:8px 14px;font-size:13px;font-weight:500;border:1px solid var(--amber);border-radius:6px;background:var(--amber);color:#fff;cursor:pointer;font-family:'Inter',sans-serif;white-space:nowrap}
+.api-bar-link{color:var(--blue);text-decoration:none;font-size:11px;width:100%}
+
+/* ── MARKET BAR ── */
+.market-bar{background:var(--white);border-bottom:1px solid var(--border);padding:8px 16px;display:flex;align-items:center;gap:12px;font-size:12px;overflow-x:auto;-webkit-overflow-scrolling:touch;white-space:nowrap}
+.market-bar::-webkit-scrollbar{display:none}
+.mkt-index{display:flex;align-items:center;gap:6px}
+.mkt-label{font-weight:600;color:var(--muted);font-size:11px;text-transform:uppercase;letter-spacing:.04em}
+.mkt-price{font-weight:600;font-variant-numeric:tabular-nums;color:var(--text)}
+.mkt-change{font-weight:500;font-variant-numeric:tabular-nums}
+.mkt-change.pos{color:var(--green-text)}
+.mkt-change.neg{color:var(--red)}
+.mkt-divider{width:1px;height:14px;background:var(--border);flex-shrink:0}
+.mkt-status{display:flex;align-items:center;gap:4px;font-size:11px;color:var(--muted);flex-shrink:0}
+.mkt-live-dot{width:5px;height:5px;border-radius:50%;background:var(--green);animation:pulse 2s infinite;flex-shrink:0}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.3}}
+
+/* ── PAGES ── */
+.page{display:none;padding:16px 16px 80px}
 .page.active{display:block}
 
-/* DASHBOARD TOGGLE */
-.view-toggle{display:flex;gap:4px;background:var(--white);border:1px solid var(--border);border-radius:var(--r);padding:4px;margin-bottom:20px;width:fit-content}
-.view-btn{padding:7px 18px;font-size:13px;font-weight:500;color:var(--muted);border:none;background:none;cursor:pointer;border-radius:9px;transition:all .15s;font-family:'Inter',sans-serif}
+/* ── VIEW TOGGLE ── */
+.view-toggle{display:flex;gap:4px;background:var(--white);border:1px solid var(--border);border-radius:var(--r);padding:3px;margin-bottom:16px;overflow-x:auto}
+.view-toggle::-webkit-scrollbar{display:none}
+.view-btn{flex:1;padding:8px 12px;font-size:12px;font-weight:500;color:var(--muted);border:none;background:none;cursor:pointer;border-radius:9px;transition:all .15s;font-family:'Inter',sans-serif;white-space:nowrap}
 .view-btn.active{background:var(--text);color:#fff}
 
-/* HERO */
-.hero{background:var(--white);border:1px solid var(--border);border-radius:var(--r);padding:28px 32px;margin-bottom:20px}
-.hero-eyebrow{font-size:11px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.07em;margin-bottom:6px}
-.hero-value{font-size:38px;font-weight:700;letter-spacing:-.02em;margin-bottom:6px;font-variant-numeric:tabular-nums}
-.hero-sub{font-size:13px;color:var(--muted);margin-bottom:20px}
-.hero-stats{display:grid;grid-template-columns:repeat(4,1fr);gap:0;border-top:1px solid var(--border-lt);padding-top:18px}
-.hero-stat{padding:0 20px}
-.hero-stat:first-child{padding-left:0}
-.hero-stat+.hero-stat{border-left:1px solid var(--border-lt)}
-.hs-label{font-size:11px;color:var(--muted);margin-bottom:4px}
-.hs-val{font-size:17px;font-weight:600;font-variant-numeric:tabular-nums}
+/* ── HERO ── */
+.hero{background:var(--white);border:1px solid var(--border);border-radius:var(--r);padding:20px 16px;margin-bottom:16px}
+.hero-eyebrow{font-size:11px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.07em;margin-bottom:5px}
+.hero-value{font-size:30px;font-weight:700;letter-spacing:-.02em;margin-bottom:4px;font-variant-numeric:tabular-nums}
+.hero-sub{font-size:12px;color:var(--muted);margin-bottom:16px}
+.hero-stats{display:grid;grid-template-columns:1fr 1fr;gap:12px;border-top:1px solid var(--border-lt);padding-top:14px}
+.hero-stat{padding:0}
+.hs-label{font-size:11px;color:var(--muted);margin-bottom:3px}
+.hs-val{font-size:15px;font-weight:600;font-variant-numeric:tabular-nums}
 .hs-val.pos{color:var(--green-text)}
 .hs-val.neg{color:var(--red)}
 
-/* PERSON CARDS (dashboard) */
-.person-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-bottom:20px}
-.person-card{background:var(--white);border:1px solid var(--border);border-radius:var(--r);padding:18px 20px}
-.pc-header{display:flex;align-items:center;gap:10px;margin-bottom:14px}
-.avatar{width:34px;height:34px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;flex-shrink:0}
+/* ── PERSON CARDS ── */
+.person-grid{display:grid;grid-template-columns:1fr;gap:10px;margin-bottom:16px}
+@media(min-width:480px){.person-grid{grid-template-columns:1fr 1fr}}
+@media(min-width:768px){.person-grid{grid-template-columns:repeat(3,1fr)}}
+.person-card{background:var(--white);border:1px solid var(--border);border-radius:var(--r);padding:14px 16px}
+.pc-header{display:flex;align-items:center;gap:10px;margin-bottom:12px}
+.avatar{width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;flex-shrink:0}
 .av-me{background:var(--blue-bg);color:var(--blue-text)}
 .av-wife{background:var(--purple-bg);color:var(--purple-text)}
 .av-baba{background:var(--amber-bg);color:var(--amber)}
@@ -68,197 +97,197 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);font-
 .pc-stat-label{font-size:11px;color:var(--muted);margin-bottom:2px}
 .pc-stat-val{font-size:16px;font-weight:600;font-variant-numeric:tabular-nums}
 
-/* SECTION */
-.sec-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px}
+/* ── SECTION ── */
+.sec-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px}
 .sec-title{font-size:14px;font-weight:600}
 .sec-meta{font-size:12px;color:var(--muted)}
 
-/* CARD / TABLE */
-.card{background:var(--white);border:1px solid var(--border);border-radius:var(--r);overflow:hidden;margin-bottom:20px}
-.tbl-wrap{overflow-x:auto}
-table{width:100%;border-collapse:collapse}
-thead th{font-size:11px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;padding:11px 14px;text-align:left;background:var(--bg);border-bottom:1px solid var(--border);white-space:nowrap}
+/* ── CARD / TABLE ── */
+.card{background:var(--white);border:1px solid var(--border);border-radius:var(--r);overflow:hidden;margin-bottom:16px}
+.tbl-wrap{overflow-x:auto;-webkit-overflow-scrolling:touch}
+table{width:100%;border-collapse:collapse;min-width:500px}
+thead th{font-size:10px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.04em;padding:10px 12px;text-align:left;background:var(--bg);border-bottom:1px solid var(--border);white-space:nowrap}
 th.r,td.r{text-align:right}
-tbody tr{border-bottom:1px solid var(--border-lt);transition:background .1s}
+tbody tr{border-bottom:1px solid var(--border-lt)}
 tbody tr:last-child{border-bottom:none}
-tbody tr:hover{background:#fafbfc}
-td{padding:13px 14px;font-size:13px;vertical-align:middle}
+td{padding:12px 12px;font-size:12px;color:var(--text);vertical-align:middle}
 .ticker-sym{font-size:13px;font-weight:600}
-.ticker-name{font-size:11px;color:var(--muted);margin-top:1px}
+.ticker-name{font-size:10px;color:var(--muted);margin-top:1px}
 .mono{font-variant-numeric:tabular-nums}
 .pos{color:var(--green-text)}
 .neg{color:var(--red)}
-.pill{display:inline-flex;align-items:center;padding:2px 7px;border-radius:20px;font-size:11px;font-weight:500}
+.pill{display:inline-flex;align-items:center;padding:2px 6px;border-radius:20px;font-size:10px;font-weight:500}
 .pill-pos{background:var(--green-bg);color:var(--green-text)}
 .pill-neg{background:var(--red-bg);color:var(--red)}
 .live-dot{display:inline-block;width:5px;height:5px;background:var(--green);border-radius:50%;margin-right:4px;animation:pulse 2s infinite}
-@keyframes pulse{0%,100%{opacity:1}50%{opacity:.3}}
-.no-feed{font-size:11px;color:var(--hint)}
-.empty-state{text-align:center;padding:36px;color:var(--muted);font-size:13px}
+.no-feed{font-size:10px;color:var(--hint)}
+.empty-state{text-align:center;padding:32px 16px;color:var(--muted);font-size:13px}
 
-/* SPLIT DISPLAY */
-.split-col{display:flex;flex-direction:column;gap:4px;align-items:flex-end}
-.split-person{display:flex;align-items:center;gap:5px;font-size:11px;white-space:nowrap}
-.sp-dot{width:6px;height:6px;border-radius:50%;flex-shrink:0}
+/* ── SPLIT DISPLAY ── */
+.split-col{display:flex;flex-direction:column;gap:3px;align-items:flex-end}
+.split-person{display:flex;align-items:center;gap:4px;font-size:10px;white-space:nowrap}
+.sp-dot{width:5px;height:5px;border-radius:50%;flex-shrink:0}
 .sp-me{background:var(--blue)}
 .sp-other{background:var(--amber)}
-.split-bar{width:56px;height:3px;border-radius:2px;background:var(--border);overflow:hidden;margin-top:2px}
+.split-bar{width:48px;height:3px;border-radius:2px;background:var(--border);overflow:hidden;margin-top:1px}
 .split-fill{height:100%;background:var(--blue);border-radius:2px}
 
-/* ADD FORM */
-.add-form{background:var(--bg);border-top:1px solid var(--border);padding:20px;display:none}
+/* ── ADD FORM ── */
+.add-form{background:var(--bg);border-top:1px solid var(--border);padding:16px;display:none}
 .add-form.open{display:block}
-.form-title{font-size:13px;font-weight:600;margin-bottom:14px;color:var(--text)}
-.fg{display:flex;flex-direction:column;gap:4px}
+.form-title{font-size:13px;font-weight:600;margin-bottom:12px}
+.fg{display:flex;flex-direction:column;gap:4px;margin-bottom:10px}
 .fg label{font-size:11px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.04em}
-.fg input,.fg select{padding:8px 11px;font-size:13px;font-family:'Inter',sans-serif;border:1px solid var(--border);border-radius:var(--rs);background:var(--white);color:var(--text);outline:none;transition:border .15s;width:100%}
+.fg input,.fg select{padding:11px 12px;font-size:14px;font-family:'Inter',sans-serif;border:1px solid var(--border);border-radius:var(--rs);background:var(--white);color:var(--text);outline:none;width:100%;-webkit-appearance:none}
 .fg input:focus,.fg select:focus{border-color:var(--blue)}
-.fg input.calc{background:var(--bg);color:var(--muted);cursor:default}
+.fg input.calc{background:var(--bg);color:var(--muted)}
+.form-grid-2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
 .form-section{margin-bottom:14px}
 .form-section-label{font-size:11px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;margin-bottom:8px;padding-bottom:6px;border-bottom:1px solid var(--border-lt)}
-.grid-2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
-.grid-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px}
-.grid-4{display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:10px}
-.grid-6{display:grid;grid-template-columns:repeat(6,1fr);gap:10px}
 .split-entry{background:var(--white);border:1px solid var(--border-lt);border-radius:var(--rs);padding:12px;margin-bottom:10px}
 .split-entry-header{display:flex;align-items:center;gap:8px;margin-bottom:10px}
-.split-avatar{width:24px;height:24px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;flex-shrink:0}
 .split-entry-name{font-size:12px;font-weight:600}
-.form-actions{display:flex;gap:8px;margin-top:14px}
-.btn{padding:8px 16px;font-size:13px;font-weight:500;border-radius:var(--rs);cursor:pointer;border:1px solid var(--border);background:var(--white);color:var(--text);font-family:'Inter',sans-serif;transition:all .15s}
-.btn:hover{background:var(--bg)}
+.form-actions{display:flex;gap:8px;margin-top:4px}
+.btn{padding:11px 16px;font-size:14px;font-weight:500;border-radius:var(--rs);cursor:pointer;border:1px solid var(--border);background:var(--white);color:var(--text);font-family:'Inter',sans-serif}
+.btn:active{opacity:.85}
 .btn-green{background:var(--green);color:#fff;border-color:var(--green)}
-.btn-green:hover{opacity:.9}
-.btn-icon{padding:5px 9px;font-size:11px;background:none;border:1px solid var(--border);border-radius:var(--rs);cursor:pointer;color:var(--muted);font-family:'Inter',sans-serif;line-height:1.4}
-.btn-icon:hover{background:var(--red-bg);border-color:var(--red);color:var(--red)}
-.add-trigger{display:flex;align-items:center;gap:6px;padding:9px 14px;font-size:13px;font-weight:500;border:1.5px dashed var(--border);border-radius:var(--rs);background:none;color:var(--muted);cursor:pointer;width:100%;transition:all .15s;font-family:'Inter',sans-serif}
-.add-trigger:hover{border-color:var(--blue);color:var(--blue);background:var(--blue-bg)}
+.btn-icon{padding:6px 10px;font-size:11px;background:none;border:1px solid var(--border);border-radius:var(--rs);cursor:pointer;color:var(--muted);font-family:'Inter',sans-serif;min-width:32px;min-height:32px}
+.btn-icon:active{background:var(--red-bg);border-color:var(--red);color:var(--red)}
+.add-trigger{display:flex;align-items:center;justify-content:center;gap:6px;padding:12px 14px;font-size:13px;font-weight:500;border:1.5px dashed var(--border);border-radius:var(--rs);background:none;color:var(--muted);cursor:pointer;width:100%;font-family:'Inter',sans-serif}
+.add-trigger:active{border-color:var(--blue);color:var(--blue);background:var(--blue-bg)}
 
-/* TOOLS (sell + proj) */
-.two-col{display:grid;grid-template-columns:1fr 1fr;gap:20px}
-.tool-card{background:var(--white);border:1px solid var(--border);border-radius:var(--r);padding:22px}
-.tool-title{font-size:14px;font-weight:600;margin-bottom:4px}
-.tool-sub{font-size:12px;color:var(--muted);margin-bottom:18px}
-.result-section{margin-top:18px;border-top:1px solid var(--border-lt);padding-top:16px}
-.result-label{font-size:11px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;margin-bottom:10px}
+/* ── TOOLS ── */
+.tool-card{background:var(--white);border:1px solid var(--border);border-radius:var(--r);padding:16px;margin-bottom:14px}
+.tool-title{font-size:14px;font-weight:600;margin-bottom:3px}
+.tool-sub{font-size:11px;color:var(--muted);margin-bottom:14px}
+.result-section{margin-top:14px;border-top:1px solid var(--border-lt);padding-top:12px}
+.result-label{font-size:11px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;margin-bottom:8px}
 .result-row{display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-bottom:1px solid var(--border-lt)}
 .result-row:last-child{border-bottom:none}
 .rr-l{font-size:12px;color:var(--muted)}
 .rr-v{font-size:13px;font-weight:600;font-variant-numeric:tabular-nums}
 .result-highlight{background:var(--bg);border-radius:var(--rs);padding:10px 12px;margin-top:8px}
 .rh-row{display:flex;justify-content:space-between;align-items:center;padding:4px 0}
-.rh-label{font-size:12px;color:var(--muted);display:flex;align-items:center;gap:6px}
+.rh-label{font-size:12px;color:var(--muted);display:flex;align-items:center;gap:5px}
 .rh-val{font-size:14px;font-weight:700;font-variant-numeric:tabular-nums}
-.divider{height:1px;background:var(--border-lt);margin:12px 0}
+.divider{height:1px;background:var(--border-lt);margin:10px 0}
 .hint-text{font-size:12px;color:var(--hint);text-align:center;padding:16px 0}
 
-/* MARKET TICKER BAR */
-.market-bar{background:var(--white);border-bottom:1px solid var(--border);padding:0 28px;height:36px;display:flex;align-items:center;gap:28px;font-size:12px}
-.mkt-index{display:flex;align-items:center;gap:10px}
-.mkt-label{font-weight:600;color:var(--muted);font-size:11px;text-transform:uppercase;letter-spacing:.05em}
-.mkt-price{font-weight:600;font-variant-numeric:tabular-nums;color:var(--text)}
-.mkt-change{font-weight:500;font-variant-numeric:tabular-nums}
-.mkt-change.pos{color:var(--green-text)}
-.mkt-change.neg{color:var(--red)}
-.mkt-divider{width:1px;height:16px;background:var(--border)}
-.mkt-status{display:flex;align-items:center;gap:5px;font-size:11px;color:var(--muted)}
-.mkt-live-dot{width:5px;height:5px;border-radius:50%;background:var(--green);animation:pulse 2s infinite}
-.mkt-loading{color:var(--hint);font-size:12px;font-style:italic}
-
-/* API KEY BAR */
-.api-bar{background:#fffbeb;border-bottom:1px solid #fde68a;padding:8px 28px;display:flex;align-items:center;gap:12px;font-size:12px}
-.api-bar.hidden{display:none}
-.api-bar-label{font-weight:600;color:#92400e;white-space:nowrap}
-.api-bar input{padding:5px 10px;font-size:12px;font-family:'Inter',sans-serif;border:1px solid #fde68a;border-radius:6px;background:#fff;color:var(--text);outline:none;width:260px}
-.api-bar input:focus{border-color:var(--amber)}
-.api-bar-btn{padding:5px 12px;font-size:12px;font-weight:500;border:1px solid var(--amber);border-radius:6px;background:var(--amber);color:#fff;cursor:pointer;font-family:'Inter',sans-serif}
-.api-bar-btn:hover{opacity:.9}
-.api-bar-link{color:var(--blue);text-decoration:none;font-size:11px}
-.api-bar-link:hover{text-decoration:underline}
-.api-bar-status{font-size:11px;color:var(--green-text);font-weight:500}
-
-/* MARKET CONTEXT CARD */
-.mkt-context{background:var(--white);border:1px solid var(--border);border-radius:var(--r);padding:16px 20px;margin-bottom:20px;display:flex;align-items:center;justify-content:space-between;gap:20px}
-.mkt-ctx-left{display:flex;align-items:center;gap:16px}
-.mkt-ctx-badge{background:var(--bg);border:1px solid var(--border);border-radius:var(--rs);padding:8px 14px;display:flex;flex-direction:column;gap:2px;min-width:130px}
-.mkt-ctx-name{font-size:10px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.06em}
-.mkt-ctx-val{font-size:18px;font-weight:700;font-variant-numeric:tabular-nums;color:var(--text)}
-.mkt-ctx-chg{font-size:12px;font-weight:500}
-.mkt-ctx-stats{display:flex;gap:20px}
-.mkt-ctx-stat{display:flex;flex-direction:column;gap:2px}
-.mkt-ctx-stat-label{font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:.05em}
+/* ── MARKET CONTEXT CARD ── */
+.mkt-context{background:var(--white);border:1px solid var(--border);border-radius:var(--r);padding:14px 16px;margin-bottom:16px}
+.mkt-ctx-name{font-size:10px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.06em;margin-bottom:4px}
+.mkt-ctx-val{font-size:24px;font-weight:700;font-variant-numeric:tabular-nums;color:var(--text)}
+.mkt-ctx-chg{font-size:13px;font-weight:500;margin-bottom:12px}
+.mkt-ctx-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:12px}
+@media(min-width:480px){.mkt-ctx-stats{grid-template-columns:repeat(5,1fr)}}
+.mkt-ctx-stat-label{font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:.04em;margin-bottom:2px}
 .mkt-ctx-stat-val{font-size:13px;font-weight:600;font-variant-numeric:tabular-nums}
-.mkt-sentiment{display:flex;align-items:center;gap:8px;padding:8px 14px;border-radius:var(--rs);font-size:12px;font-weight:500}
+.mkt-sentiment{display:flex;align-items:flex-start;gap:6px;padding:10px 12px;border-radius:var(--rs);font-size:12px;font-weight:500;line-height:1.4}
 .sent-bull{background:var(--green-bg);color:var(--green-text)}
 .sent-bear{background:var(--red-bg);color:var(--red)}
 .sent-flat{background:var(--bg);color:var(--muted)}
+
+/* ── CASH SECTION ── */
+.cash-section{margin-top:16px}
+.cash-section-title{font-size:11px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.06em;margin-bottom:10px}
+.cash-grid{display:grid;grid-template-columns:1fr;gap:10px}
+@media(min-width:480px){.cash-grid{grid-template-columns:1fr 1fr}}
+@media(min-width:768px){.cash-grid{grid-template-columns:repeat(3,1fr)}}
+.cash-card{background:var(--white);border:1px solid var(--border);border-radius:var(--r);padding:14px 16px}
+.cash-card-header{display:flex;align-items:center;gap:8px;margin-bottom:8px}
+.cash-card-name{font-size:12px;font-weight:600;color:var(--muted)}
+.cash-amount-input{font-size:22px;font-weight:700;font-variant-numeric:tabular-nums;color:var(--text);border:none;background:transparent;width:100%;font-family:'Inter',sans-serif;outline:none;padding:0;-webkit-appearance:none}
+.cash-amount-input::placeholder{color:var(--border)}
+.cash-label{font-size:11px;color:var(--hint);margin-top:2px}
+.cash-total{background:var(--bg);border-radius:var(--rs);padding:10px 14px;display:flex;justify-content:space-between;align-items:center;margin-top:10px}
+.cash-total-label{font-size:12px;color:var(--muted);font-weight:500}
+.cash-total-val{font-size:15px;font-weight:700;font-variant-numeric:tabular-nums}
+
+/* ── PIN LOCK ── */
+.pin-overlay{position:fixed;inset:0;background:var(--bg);z-index:999;display:flex;align-items:center;justify-content:center;padding:24px}
+.pin-overlay.hidden{display:none}
+.pin-box{background:var(--white);border:1px solid var(--border);border-radius:var(--r);padding:32px 24px;width:100%;max-width:340px;text-align:center}
+.pin-logo{font-size:15px;font-weight:700;display:flex;align-items:center;justify-content:center;gap:7px;margin-bottom:24px}
+.pin-logo-dot{width:7px;height:7px;background:var(--green);border-radius:50%;display:inline-block}
+.pin-title{font-size:18px;font-weight:600;margin-bottom:6px}
+.pin-sub{font-size:13px;color:var(--muted);margin-bottom:24px}
+.pin-input{width:100%;padding:14px 16px;font-size:20px;font-weight:600;font-family:'Inter',sans-serif;border:2px solid var(--border);border-radius:var(--rs);text-align:center;letter-spacing:.15em;outline:none;background:var(--bg);color:var(--text);-webkit-appearance:none}
+.pin-input:focus{border-color:var(--blue);background:var(--white)}
+.pin-input.error{border-color:var(--red);animation:shake .3s}
+@keyframes shake{0%,100%{transform:translateX(0)}25%{transform:translateX(-6px)}75%{transform:translateX(6px)}}
+.pin-btn{width:100%;margin-top:14px;padding:14px;font-size:15px;font-weight:600;border:none;border-radius:var(--rs);background:var(--text);color:#fff;cursor:pointer;font-family:'Inter',sans-serif}
+.pin-btn:active{opacity:.85}
+.pin-error{font-size:12px;color:var(--red);margin-top:10px;min-height:18px}
+.pin-hint{font-size:11px;color:var(--hint);margin-top:16px}
+
+/* ── STORAGE STATUS ── */
+.storage-status{font-size:11px;font-weight:500;transition:all .3s}
+.storage-saving{color:var(--amber)}
+.storage-success{color:var(--green-text)}
+.storage-warn{color:var(--red)}
+
+/* ── SELECT ── */
+select{padding:11px 12px;font-size:14px;font-family:'Inter',sans-serif;border:1px solid var(--border);border-radius:var(--rs);background:var(--white);color:var(--text);outline:none;width:100%;-webkit-appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%236b7280' stroke-width='2'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 12px center}
+
+/* ── DESKTOP OVERRIDES ── */
+@media(min-width:768px){
+  .topbar{padding:0 28px;height:58px}
+  .page{padding:24px 28px 24px}
+  .bottom-nav{display:none}
+  .hero-value{font-size:36px}
+  .hero-stats{grid-template-columns:repeat(4,1fr)}
+  .mkt-ctx-stats{grid-template-columns:repeat(5,1fr)}
+  .form-grid-2{grid-template-columns:1fr 1fr}
+  table{min-width:unset}
+  .add-trigger:hover{border-color:var(--blue);color:var(--blue);background:var(--blue-bg)}
+  .btn:hover{opacity:.9}
+}
 </style>
 </head>
 <body>
 
 <div class="topbar">
   <div class="logo"><span class="logo-dot"></span>SarwaDesk</div>
-  <div class="nav-tabs">
-    <button class="nav-tab active" onclick="showPage('dashboard',this)">Dashboard</button>
-    <button class="nav-tab" onclick="showPage('holdings',this)">Holdings</button>
-    <button class="nav-tab" onclick="showPage('partner',this)">Partner</button>
-    <button class="nav-tab" onclick="showPage('sell',this)">Sell simulator</button>
-    <button class="nav-tab" onclick="showPage('proj',this)">Projections</button>
-  </div>
-  <div class="topbar-right">
-    <button class="icon-btn" onclick="refreshAll()">↻ Refresh prices</button>
-  </div>
+  <div style="display:flex;align-items:center;gap:8px">
+  <span id="storage-status" class="storage-status"></span>
+  <button class="refresh-btn" onclick="refreshAll()">↻ Refresh</button>
 </div>
-
+</div>
 
 <!-- API KEY BAR -->
 <div class="api-bar" id="api-key-bar">
-  <span class="api-bar-label">⚡ Live prices need a free Alpha Vantage API key</span>
-  <input id="api-key-input" type="text" placeholder="Paste your Alpha Vantage API key here..." />
+  <span class="api-bar-label">⚡ Enter your Alpha Vantage API key for live prices</span>
+  <input id="api-key-input" type="text" placeholder="Paste API key here..." />
   <button class="api-bar-btn" onclick="saveApiKey()">Activate</button>
   <a href="https://www.alphavantage.co/support/#api-key" target="_blank" class="api-bar-link">Get free key at alphavantage.co →</a>
+</div>
+
+<!-- SHARE BANNER -->
+<div id="share-banner" class="share-banner hidden">
+  <span class="share-text">Share this URL with your partner & investor — their dashboard will sync automatically:</span>
+  <a id="share-url" href="#" class="share-link" target="_blank"></a>
 </div>
 
 <!-- MARKET TICKER BAR -->
 <div class="market-bar">
   <div class="mkt-index">
-    <span class="mkt-label">NASDAQ ^IXIC</span>
+    <span class="mkt-label">NASDAQ</span>
     <span class="mkt-price" id="mkt-price">—</span>
     <span class="mkt-change" id="mkt-pts">—</span>
     <span class="mkt-change" id="mkt-pct">—</span>
   </div>
   <div class="mkt-divider"></div>
-  <div class="mkt-index"><span class="mkt-label">Day range</span><span class="mkt-price" id="mkt-range">—</span></div>
+  <div class="mkt-index"><span class="mkt-label">Range</span><span class="mkt-price" id="mkt-range">—</span></div>
   <div class="mkt-divider"></div>
-  <div class="mkt-index"><span class="mkt-label">52-wk range</span><span class="mkt-price" id="mkt-52wk">—</span></div>
-  <div class="mkt-divider"></div>
-  <div class="mkt-status"><span class="mkt-live-dot" id="mkt-dot" style="background:var(--hint)"></span><span id="mkt-status-text">Loading market data...</span></div>
+  <div class="mkt-status"><span class="mkt-live-dot" id="mkt-dot" style="background:var(--hint)"></span><span id="mkt-status-text">Loading...</span></div>
 </div>
-<!-- ═══════════════ DASHBOARD ═══════════════ -->
+
+<!-- ═══ DASHBOARD ═══ -->
 <div id="pg-dashboard" class="page active">
   <div class="view-toggle">
     <button class="view-btn active" onclick="setView('me',this)">My portfolio</button>
-    <button class="view-btn" onclick="setView('family',this)">Family portfolio</button>
+    <button class="view-btn" onclick="setView('family',this)">Family</button>
     <button class="view-btn" onclick="setView('combined',this)">Combined</button>
-  </div>
-
-  <!-- MARKET CONTEXT CARD -->
-  <div class="mkt-context" id="mkt-context-card">
-    <div class="mkt-ctx-left">
-      <div class="mkt-ctx-badge">
-        <div class="mkt-ctx-name">NASDAQ via QQQ ETF</div>
-        <div class="mkt-ctx-val" id="mktc-price">—</div>
-        <div class="mkt-ctx-chg" id="mktc-chg">—</div>
-      </div>
-      <div class="mkt-ctx-stats">
-        <div class="mkt-ctx-stat"><div class="mkt-ctx-stat-label">Change (pts)</div><div class="mkt-ctx-stat-val" id="mktc-pts">—</div></div>
-        <div class="mkt-ctx-stat"><div class="mkt-ctx-stat-label">Change (%)</div><div class="mkt-ctx-stat-val" id="mktc-pct">—</div></div>
-        <div class="mkt-ctx-stat"><div class="mkt-ctx-stat-label">Day low</div><div class="mkt-ctx-stat-val" id="mktc-low">—</div></div>
-        <div class="mkt-ctx-stat"><div class="mkt-ctx-stat-label">Day high</div><div class="mkt-ctx-stat-val" id="mktc-high">—</div></div>
-        <div class="mkt-ctx-stat"><div class="mkt-ctx-stat-label">Prev close</div><div class="mkt-ctx-stat-val" id="mktc-prev">—</div></div>
-      </div>
-    </div>
-    <div class="mkt-sentiment" id="mktc-sentiment"></div>
   </div>
 
   <!-- ME VIEW -->
@@ -266,45 +295,87 @@ td{padding:13px 14px;font-size:13px;vertical-align:middle}
     <div class="hero">
       <div class="hero-eyebrow">My portfolio</div>
       <div class="hero-value" id="d-me-total">$0.00</div>
-      <div class="hero-sub">Your share across all joint and solo holdings</div>
+      <div class="hero-sub">Your share across all holdings</div>
       <div class="hero-stats">
-        <div class="hero-stat"><div class="hs-label">Invested (my capital)</div><div class="hs-val" id="d-me-invested">$0.00</div></div>
+        <div class="hero-stat"><div class="hs-label">Invested</div><div class="hs-val" id="d-me-invested">$0.00</div></div>
         <div class="hero-stat"><div class="hs-label">Current value</div><div class="hs-val" id="d-me-value">$0.00</div></div>
-        <div class="hero-stat"><div class="hs-label">Unrealised P&L</div><div class="hs-val" id="d-me-pnl">$0.00</div></div>
+        <div class="hero-stat"><div class="hs-label">P&L</div><div class="hs-val" id="d-me-pnl">$0.00</div></div>
         <div class="hero-stat"><div class="hs-label">Return</div><div class="hs-val" id="d-me-ret">0.00%</div></div>
       </div>
     </div>
+    <div class="mkt-context">
+      <div class="mkt-ctx-name">NASDAQ — QQQ ETF</div>
+      <div class="mkt-ctx-val" id="mktc-price">—</div>
+      <div class="mkt-ctx-chg" id="mktc-chg">—</div>
+      <div class="mkt-ctx-stats">
+        <div><div class="mkt-ctx-stat-label">Chg pts</div><div class="mkt-ctx-stat-val" id="mktc-pts">—</div></div>
+        <div><div class="mkt-ctx-stat-label">Chg %</div><div class="mkt-ctx-stat-val" id="mktc-pct">—</div></div>
+        <div><div class="mkt-ctx-stat-label">Day low</div><div class="mkt-ctx-stat-val" id="mktc-low">—</div></div>
+        <div><div class="mkt-ctx-stat-label">Day high</div><div class="mkt-ctx-stat-val" id="mktc-high">—</div></div>
+        <div><div class="mkt-ctx-stat-label">Prev close</div><div class="mkt-ctx-stat-val" id="mktc-prev">—</div></div>
+      </div>
+      <div class="mkt-sentiment" id="mktc-sentiment"></div>
+    </div>
     <div class="card">
       <div class="tbl-wrap"><table>
-        <thead><tr><th>Stock</th><th class="r">My shares</th><th class="r">Avg cost</th><th class="r">Live price</th><th class="r">My value</th><th class="r">My P&L</th><th class="r">Return</th></tr></thead>
-        <tbody id="d-me-tbody"><tr><td colspan="7"><div class="empty-state">Add holdings to see your portfolio</div></td></tr></tbody>
+        <thead><tr><th>Stock</th><th class="r">My shares</th><th class="r">Price</th><th class="r">My value</th><th class="r">P&L</th></tr></thead>
+        <tbody id="d-me-tbody"><tr><td colspan="5"><div class="empty-state">Add holdings to see your portfolio</div></td></tr></tbody>
       </table></div>
+    </div>
+    <div class="cash-section">
+      <div class="cash-section-title">💵 Cash on hand</div>
+      <div class="cash-grid">
+        <div class="cash-card">
+          <div class="cash-card-header"><div class="avatar av-me">OS</div><div class="cash-card-name">My cash</div></div>
+          <input class="cash-amount-input" type="number" id="cash-me" placeholder="0.00" step="0.01" min="0" inputmode="decimal" oninput="syncCash('me',this.value)">
+          <div class="cash-label">Available to invest</div>
+        </div>
+      </div>
     </div>
   </div>
 
   <!-- FAMILY VIEW -->
   <div id="view-family" class="dash-view" style="display:none">
     <div class="hero">
-      <div class="hero-eyebrow">Family portfolio — You & Wife</div>
+      <div class="hero-eyebrow">Family — You & Wife</div>
       <div class="hero-value" id="d-fam-total">$0.00</div>
-      <div class="hero-sub">Combined value of your holdings and your wife's portfolio</div>
+      <div class="hero-sub">Combined investments (excluding cash)</div>
       <div class="hero-stats">
         <div class="hero-stat"><div class="hs-label">Your value</div><div class="hs-val" id="d-fam-me">$0.00</div></div>
         <div class="hero-stat"><div class="hs-label">Wife's value</div><div class="hs-val" id="d-fam-wife">$0.00</div></div>
         <div class="hero-stat"><div class="hs-label">Family P&L</div><div class="hs-val" id="d-fam-pnl">$0.00</div></div>
-        <div class="hero-stat"><div class="hs-label">Family return</div><div class="hs-val" id="d-fam-ret">0.00%</div></div>
+        <div class="hero-stat"><div class="hs-label">Return</div><div class="hs-val" id="d-fam-ret">0.00%</div></div>
       </div>
     </div>
     <div class="person-grid">
       <div class="person-card">
-        <div class="pc-header"><div class="avatar av-me" id="d-fam-me-init">OS</div><div><div class="pc-name">You</div><div class="pc-role">Primary account</div></div></div>
+        <div class="pc-header"><div class="avatar av-me">OS</div><div><div class="pc-name">You</div><div class="pc-role">Primary</div></div></div>
         <div class="pc-stat"><div class="pc-stat-label">Current value</div><div class="pc-stat-val" id="d-fam-me-val">$0.00</div></div>
         <div class="pc-stat"><div class="pc-stat-label">P&L</div><div class="pc-stat-val" id="d-fam-me-pnl">$0.00</div></div>
       </div>
       <div class="person-card">
-        <div class="pc-header"><div class="avatar av-wife">W</div><div><div class="pc-name">Wife</div><div class="pc-role">Partner portfolio</div></div></div>
+        <div class="pc-header"><div class="avatar av-wife">W</div><div><div class="pc-name">Wife</div><div class="pc-role">Partner</div></div></div>
         <div class="pc-stat"><div class="pc-stat-label">Current value</div><div class="pc-stat-val" id="d-fam-wife-val">$0.00</div></div>
         <div class="pc-stat"><div class="pc-stat-label">P&L</div><div class="pc-stat-val" id="d-fam-wife-pnl">$0.00</div></div>
+      </div>
+    </div>
+    <div class="cash-section">
+      <div class="cash-section-title">💵 Cash on hand</div>
+      <div class="cash-grid">
+        <div class="cash-card">
+          <div class="cash-card-header"><div class="avatar av-me">OS</div><div class="cash-card-name">My cash</div></div>
+          <input class="cash-amount-input" type="number" id="cash-me-fam" placeholder="0.00" step="0.01" min="0" inputmode="decimal" oninput="syncCash('me',this.value)">
+          <div class="cash-label">Available to invest</div>
+        </div>
+        <div class="cash-card">
+          <div class="cash-card-header"><div class="avatar av-wife">W</div><div class="cash-card-name">Wife's cash</div></div>
+          <input class="cash-amount-input" type="number" id="cash-wife" placeholder="0.00" step="0.01" min="0" inputmode="decimal" oninput="syncCash('wife',this.value)">
+          <div class="cash-label">Available to invest</div>
+        </div>
+      </div>
+      <div class="cash-total">
+        <span class="cash-total-label">Total family cash</span>
+        <span class="cash-total-val" id="cash-fam-total">$0.00</span>
       </div>
     </div>
   </div>
@@ -312,37 +383,61 @@ td{padding:13px 14px;font-size:13px;vertical-align:middle}
   <!-- COMBINED VIEW -->
   <div id="view-combined" class="dash-view" style="display:none">
     <div class="hero">
-      <div class="hero-eyebrow">Combined portfolio — You, Wife & Investor</div>
+      <div class="hero-eyebrow">Combined — You, Wife & Investor</div>
       <div class="hero-value" id="d-com-total">$0.00</div>
-      <div class="hero-sub">Total value across all three parties</div>
+      <div class="hero-sub">Total investments across all three parties</div>
       <div class="hero-stats">
         <div class="hero-stat"><div class="hs-label">Your value</div><div class="hs-val" id="d-com-me">$0.00</div></div>
         <div class="hero-stat"><div class="hs-label">Wife's value</div><div class="hs-val" id="d-com-wife">$0.00</div></div>
-        <div class="hero-stat"><div class="hs-label">Investor's value</div><div class="hs-val" id="d-com-inv">$0.00</div></div>
+        <div class="hero-stat"><div class="hs-label">Investor</div><div class="hs-val" id="d-com-inv">$0.00</div></div>
         <div class="hero-stat"><div class="hs-label">Total P&L</div><div class="hs-val" id="d-com-pnl">$0.00</div></div>
       </div>
     </div>
     <div class="person-grid">
       <div class="person-card">
         <div class="pc-header"><div class="avatar av-me">OS</div><div><div class="pc-name">You</div><div class="pc-role">Primary</div></div></div>
-        <div class="pc-stat"><div class="pc-stat-label">Current value</div><div class="pc-stat-val" id="d-com-me-val">$0.00</div></div>
+        <div class="pc-stat"><div class="pc-stat-label">Value</div><div class="pc-stat-val" id="d-com-me-val">$0.00</div></div>
         <div class="pc-stat"><div class="pc-stat-label">P&L</div><div class="pc-stat-val" id="d-com-me-pnl">$0.00</div></div>
       </div>
       <div class="person-card">
         <div class="pc-header"><div class="avatar av-wife">W</div><div><div class="pc-name">Wife</div><div class="pc-role">Partner</div></div></div>
-        <div class="pc-stat"><div class="pc-stat-label">Current value</div><div class="pc-stat-val" id="d-com-wife-val">$0.00</div></div>
+        <div class="pc-stat"><div class="pc-stat-label">Value</div><div class="pc-stat-val" id="d-com-wife-val">$0.00</div></div>
         <div class="pc-stat"><div class="pc-stat-label">P&L</div><div class="pc-stat-val" id="d-com-wife-pnl">$0.00</div></div>
       </div>
       <div class="person-card">
         <div class="pc-header"><div class="avatar av-baba" id="d-com-inv-avatar">B</div><div><div class="pc-name" id="d-com-inv-name">Investor</div><div class="pc-role">Joint holdings</div></div></div>
-        <div class="pc-stat"><div class="pc-stat-label">Current value</div><div class="pc-stat-val" id="d-com-inv-val">$0.00</div></div>
+        <div class="pc-stat"><div class="pc-stat-label">Value</div><div class="pc-stat-val" id="d-com-inv-val">$0.00</div></div>
         <div class="pc-stat"><div class="pc-stat-label">P&L</div><div class="pc-stat-val" id="d-com-inv-pnl">$0.00</div></div>
+      </div>
+    </div>
+    <div class="cash-section">
+      <div class="cash-section-title">💵 Cash on hand</div>
+      <div class="cash-grid">
+        <div class="cash-card">
+          <div class="cash-card-header"><div class="avatar av-me">OS</div><div class="cash-card-name">My cash</div></div>
+          <input class="cash-amount-input" type="number" id="cash-me-com" placeholder="0.00" step="0.01" min="0" inputmode="decimal" oninput="syncCash('me',this.value)">
+          <div class="cash-label">Available to invest</div>
+        </div>
+        <div class="cash-card">
+          <div class="cash-card-header"><div class="avatar av-wife">W</div><div class="cash-card-name">Wife's cash</div></div>
+          <input class="cash-amount-input" type="number" id="cash-wife-com" placeholder="0.00" step="0.01" min="0" inputmode="decimal" oninput="syncCash('wife',this.value)">
+          <div class="cash-label">Available to invest</div>
+        </div>
+        <div class="cash-card">
+          <div class="cash-card-header"><div class="avatar av-baba">B</div><div class="cash-card-name" id="cash-baba-label">Investor cash</div></div>
+          <input class="cash-amount-input" type="number" id="cash-baba" placeholder="0.00" step="0.01" min="0" inputmode="decimal" oninput="syncCash('baba',this.value)">
+          <div class="cash-label">Available to invest</div>
+        </div>
+      </div>
+      <div class="cash-total">
+        <span class="cash-total-label">Total combined cash</span>
+        <span class="cash-total-val" id="cash-com-total">$0.00</span>
       </div>
     </div>
   </div>
 </div>
 
-<!-- ═══════════════ MY HOLDINGS ═══════════════ -->
+<!-- ═══ HOLDINGS ═══ -->
 <div id="pg-holdings" class="page">
   <div class="sec-head">
     <div><div class="sec-title">My holdings</div><div class="sec-meta" id="h-count">0 positions</div></div>
@@ -350,215 +445,379 @@ td{padding:13px 14px;font-size:13px;vertical-align:middle}
   <div class="card">
     <div class="tbl-wrap"><table>
       <thead><tr>
-        <th>Stock</th><th class="r">Total shares</th><th class="r">Avg cost</th><th class="r">Live price</th>
-        <th class="r">Total value</th><th>Split (me / investor)</th>
-        <th class="r">My value</th><th class="r">My shares</th>
-        <th class="r">Investor value</th><th class="r">Investor shares</th>
-        <th class="r">P&L</th><th></th>
+        <th>Stock</th><th class="r">Shares</th><th class="r">Cost</th><th class="r">Price</th>
+        <th class="r">Value</th><th>Split</th><th class="r">My val</th><th class="r">Inv val</th><th class="r">P&L</th><th></th>
       </tr></thead>
       <tbody id="holdings-tbody">
-        <tr><td colspan="12"><div class="empty-state">No holdings yet — add below</div></td></tr>
+        <tr><td colspan="10"><div class="empty-state">No holdings yet — add below</div></td></tr>
       </tbody>
     </table></div>
-
     <div id="add-form-my" class="add-form">
       <div class="form-title">Add holding</div>
-
       <div class="form-section">
         <div class="form-section-label">Stock details</div>
-        <div class="grid-4">
+        <div class="form-grid-2">
           <div class="fg"><label>Ticker</label><input id="f-ticker" placeholder="AVGO" style="text-transform:uppercase" oninput="this.value=this.value.toUpperCase()"></div>
           <div class="fg"><label>Stock name</label><input id="f-name" placeholder="Broadcom"></div>
-          <div class="fg"><label>Total shares</label><input id="f-shares" type="number" placeholder="10" step="0.0001" oninput="recalcSplit()"></div>
-          <div class="fg"><label>Avg buy price ($)</label><input id="f-buy" type="number" placeholder="850.00" step="0.01" oninput="recalcSplit()"></div>
+        </div>
+        <div class="form-grid-2">
+          <div class="fg"><label>Total shares</label><input id="f-shares" type="number" placeholder="10" step="0.0001" inputmode="decimal" oninput="recalcSplit()"></div>
+          <div class="fg"><label>Avg buy price ($)</label><input id="f-buy" type="number" placeholder="850.00" step="0.01" inputmode="decimal" oninput="recalcSplit()"></div>
         </div>
       </div>
-
       <div class="form-section">
-        <div class="form-section-label">Ownership split — enter USD invested by each person</div>
+        <div class="form-section-label">Ownership split — enter USD invested</div>
         <div class="split-entry">
           <div class="split-entry-header">
-            <div class="split-avatar av-me" style="width:24px;height:24px;border-radius:50%;background:var(--blue-bg);color:var(--blue-text);display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700">ME</div>
+            <div class="avatar av-me" style="width:24px;height:24px;font-size:10px">ME</div>
             <div class="split-entry-name">Me</div>
           </div>
-          <div class="grid-3">
-            <div class="fg"><label>Amount invested ($)</label><input id="f-me-usd" type="number" placeholder="5000.00" step="0.01" oninput="recalcSplit()"></div>
-            <div class="fg"><label>My % (auto)</label><input id="f-me-pct" class="calc" readonly placeholder="—"></div>
-            <div class="fg"><label>My shares (auto)</label><input id="f-me-shares" class="calc" readonly placeholder="—"></div>
+          <div class="form-grid-2">
+            <div class="fg"><label>Amount invested ($)</label><input id="f-me-usd" type="number" placeholder="5000.00" step="0.01" inputmode="decimal" oninput="recalcSplit()"></div>
+            <div class="fg"><label>My %</label><input id="f-me-pct" class="calc" readonly placeholder="—"></div>
           </div>
+          <div class="fg"><label>My shares (auto)</label><input id="f-me-shares" class="calc" readonly placeholder="—"></div>
         </div>
         <div class="split-entry">
           <div class="split-entry-header">
-            <div class="split-avatar" style="width:24px;height:24px;border-radius:50%;background:var(--amber-bg);color:var(--amber);display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700">IN</div>
-            <div class="fg" style="flex:1"><label style="font-size:11px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.04em">Investor name</label><input id="f-inv-name" placeholder="e.g. Baba" style="padding:5px 9px;font-size:12px;border:1px solid var(--border);border-radius:6px;background:var(--white);color:var(--text);font-family:'Inter',sans-serif;outline:none;width:180px"></div>
+            <div class="avatar av-baba" style="width:24px;height:24px;font-size:10px">IN</div>
+            <div class="fg" style="flex:1;margin-bottom:0">
+              <label>Investor name</label>
+              <input id="f-inv-name" placeholder="e.g. Baba">
+            </div>
           </div>
-          <div class="grid-3">
-            <div class="fg"><label>Amount invested ($)</label><input id="f-inv-usd" type="number" placeholder="3000.00" step="0.01" oninput="recalcSplit()"></div>
-            <div class="fg"><label>Their % (auto)</label><input id="f-inv-pct" class="calc" readonly placeholder="—"></div>
-            <div class="fg"><label>Their shares (auto)</label><input id="f-inv-shares" class="calc" readonly placeholder="—"></div>
+          <div class="form-grid-2">
+            <div class="fg"><label>Amount invested ($)</label><input id="f-inv-usd" type="number" placeholder="3000.00" step="0.01" inputmode="decimal" oninput="recalcSplit()"></div>
+            <div class="fg"><label>Their %</label><input id="f-inv-pct" class="calc" readonly placeholder="—"></div>
           </div>
+          <div class="fg"><label>Their shares (auto)</label><input id="f-inv-shares" class="calc" readonly placeholder="—"></div>
         </div>
-        <div style="font-size:11px;color:var(--hint);margin-top:4px">Leave investor fields blank if this is a solo holding (100% mine).</div>
+        <div style="font-size:11px;color:var(--hint);margin-top:4px">Leave investor blank for solo holding (100% mine)</div>
       </div>
-
       <div class="form-actions">
         <button class="btn btn-green" onclick="addHolding()">Add holding</button>
         <button class="btn" onclick="closeForm('add-form-my')">Cancel</button>
       </div>
     </div>
-
-    <div style="padding:10px 14px;border-top:1px solid var(--border-lt)">
+    <div style="padding:10px 12px;border-top:1px solid var(--border-lt)">
       <button class="add-trigger" onclick="toggleForm('add-form-my')">＋ Add a holding</button>
     </div>
   </div>
 </div>
 
-<!-- ═══════════════ PARTNER ═══════════════ -->
+<!-- ═══ PARTNER ═══ -->
 <div id="pg-partner" class="page">
-  <div class="sec-head">
-    <div><div class="sec-title">Wife's portfolio</div><div class="sec-meta" id="p-count">0 positions</div></div>
-  </div>
-  <div class="hero" style="margin-bottom:20px">
-    <div class="hero-eyebrow">Wife's portfolio summary</div>
+  <div class="hero" style="margin-bottom:16px">
+    <div class="hero-eyebrow">Wife's portfolio</div>
     <div class="hero-value" id="p-total">$0.00</div>
-    <div class="hero-sub">Total current value of all wife's holdings</div>
+    <div class="hero-sub">Total current value</div>
     <div class="hero-stats">
-      <div class="hero-stat"><div class="hs-label">Total invested</div><div class="hs-val" id="p-invested">$0.00</div></div>
-      <div class="hero-stat"><div class="hs-label">Current value</div><div class="hs-val" id="p-value">$0.00</div></div>
-      <div class="hero-stat"><div class="hs-label">Unrealised P&L</div><div class="hs-val" id="p-pnl">$0.00</div></div>
+      <div class="hero-stat"><div class="hs-label">Invested</div><div class="hs-val" id="p-invested">$0.00</div></div>
+      <div class="hero-stat"><div class="hs-label">Value</div><div class="hs-val" id="p-value">$0.00</div></div>
+      <div class="hero-stat"><div class="hs-label">P&L</div><div class="hs-val" id="p-pnl">$0.00</div></div>
       <div class="hero-stat"><div class="hs-label">Return</div><div class="hs-val" id="p-ret">0.00%</div></div>
     </div>
   </div>
   <div class="card">
     <div class="tbl-wrap"><table>
-      <thead><tr><th>Stock</th><th class="r">Shares</th><th class="r">Avg cost</th><th class="r">Live price</th><th class="r">Current value</th><th class="r">P&L</th><th class="r">Return</th><th></th></tr></thead>
+      <thead><tr><th>Stock</th><th class="r">Shares</th><th class="r">Cost</th><th class="r">Price</th><th class="r">Value</th><th class="r">P&L</th><th class="r">Ret%</th><th></th></tr></thead>
       <tbody id="partner-tbody">
-        <tr><td colspan="8"><div class="empty-state">No wife holdings yet — add below</div></td></tr>
+        <tr><td colspan="8"><div class="empty-state">No wife holdings yet</div></td></tr>
       </tbody>
     </table></div>
-
     <div id="add-form-partner" class="add-form">
       <div class="form-title">Add wife's holding</div>
-      <div class="grid-4" style="margin-bottom:14px">
+      <div class="form-grid-2">
         <div class="fg"><label>Ticker</label><input id="pf-ticker" placeholder="AAPL" style="text-transform:uppercase" oninput="this.value=this.value.toUpperCase()"></div>
         <div class="fg"><label>Stock name</label><input id="pf-name" placeholder="Apple"></div>
-        <div class="fg"><label>Shares</label><input id="pf-shares" type="number" placeholder="5" step="0.0001"></div>
-        <div class="fg"><label>Avg buy price ($)</label><input id="pf-buy" type="number" placeholder="180.00" step="0.01"></div>
+        <div class="fg"><label>Shares</label><input id="pf-shares" type="number" placeholder="5" step="0.0001" inputmode="decimal"></div>
+        <div class="fg"><label>Avg buy price ($)</label><input id="pf-buy" type="number" placeholder="180.00" step="0.01" inputmode="decimal"></div>
       </div>
       <div class="form-actions">
         <button class="btn btn-green" onclick="addPartnerHolding()">Add holding</button>
         <button class="btn" onclick="closeForm('add-form-partner')">Cancel</button>
       </div>
     </div>
-
-    <div style="padding:10px 14px;border-top:1px solid var(--border-lt)">
+    <div style="padding:10px 12px;border-top:1px solid var(--border-lt)">
       <button class="add-trigger" onclick="toggleForm('add-form-partner')">＋ Add wife's holding</button>
     </div>
   </div>
 </div>
 
-<!-- ═══════════════ SELL SIMULATOR ═══════════════ -->
+<!-- ═══ SELL SIMULATOR ═══ -->
 <div id="pg-sell" class="page">
-  <div class="two-col">
-    <div class="tool-card">
-      <div class="tool-title">Sell simulator</div>
-      <div class="tool-sub">Sarwa Trade fee: greater of $1 or 0.25% of trade value</div>
-
-      <div class="fg" style="margin-bottom:12px">
-        <label>Load from my holdings</label>
-        <select id="sim-sel" onchange="fillSim()" style="padding:8px 11px;font-size:13px;font-family:'Inter',sans-serif;border:1px solid var(--border);border-radius:var(--rs);background:var(--white);color:var(--text);outline:none">
-          <option value="">— or enter manually —</option>
-        </select>
-      </div>
-      <div class="grid-2" style="margin-bottom:10px">
-        <div class="fg"><label>Shares to sell</label><input id="sim-shares" type="number" placeholder="0" step="0.0001" oninput="calcSell()"></div>
-        <div class="fg"><label>Sell price ($)</label><input id="sim-price" type="number" placeholder="0.00" step="0.01" oninput="calcSell()"></div>
-        <div class="fg"><label>Avg buy price ($)</label><input id="sim-buy" type="number" placeholder="0.00" step="0.01" oninput="calcSell()"></div>
-        <div class="fg"><label>My split (%)</label><input id="sim-split" type="number" placeholder="60" min="0" max="100" oninput="calcSell()"></div>
-      </div>
-      <div class="grid-2">
-        <div class="fg"><label>Investor name</label><input id="sim-invname" value="Baba" oninput="calcSell()"></div>
-      </div>
+  <div class="tool-card">
+    <div class="tool-title">Sell simulator</div>
+    <div class="tool-sub">Sarwa Trade: greater of $1 or 0.25% per trade</div>
+    <div class="fg"><label>Load from holding</label>
+      <select id="sim-sel" onchange="fillSim()"><option value="">— enter manually —</option></select>
     </div>
-
-    <div class="tool-card">
-      <div class="tool-title">Breakdown</div>
-      <div class="tool-sub">Net proceeds after Sarwa fee, split by owner</div>
-      <div id="sell-empty" class="hint-text">Fill in trade details to see results</div>
-      <div id="sell-content" style="display:none">
-        <div class="result-row"><span class="rr-l">Gross proceeds</span><span class="rr-v mono" id="r-gross">—</span></div>
-        <div class="result-row"><span class="rr-l">Cost basis (total)</span><span class="rr-v mono" id="r-cost">—</span></div>
-        <div class="result-row"><span class="rr-l">Sarwa fee</span><span class="rr-v mono neg" id="r-fee">—</span></div>
-        <div class="divider"></div>
-        <div class="result-row"><span class="rr-l">Net proceeds</span><span class="rr-v mono" id="r-net">—</span></div>
-        <div class="divider"></div>
-        <div class="result-highlight">
-          <div class="rh-row"><span class="rh-label"><span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:var(--blue);margin-right:4px"></span>My share (net)</span><span class="rh-val pos" id="r-mynet">—</span></div>
-          <div class="rh-row"><span class="rh-label"><span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:var(--amber);margin-right:4px"></span><span id="r-invlabel">Investor share (net)</span></span><span class="rh-val" id="r-invnet">—</span></div>
-        </div>
-        <div class="divider"></div>
-        <div class="result-row"><span class="rr-l">My profit / loss</span><span class="rr-v mono" id="r-mypnl">—</span></div>
-        <div class="result-row"><span class="rr-l" id="r-invpnllabel">Investor profit / loss</span><span class="rr-v mono" id="r-invpnl">—</span></div>
+    <div class="form-grid-2">
+      <div class="fg"><label>Shares to sell</label><input id="sim-shares" type="number" placeholder="0" step="0.0001" inputmode="decimal" oninput="calcSell()"></div>
+      <div class="fg"><label>Sell price ($)</label><input id="sim-price" type="number" placeholder="0.00" step="0.01" inputmode="decimal" oninput="calcSell()"></div>
+      <div class="fg"><label>Buy price ($)</label><input id="sim-buy" type="number" placeholder="0.00" step="0.01" inputmode="decimal" oninput="calcSell()"></div>
+      <div class="fg"><label>My split (%)</label><input id="sim-split" type="number" placeholder="60" min="0" max="100" inputmode="decimal" oninput="calcSell()"></div>
+    </div>
+    <div class="fg"><label>Investor name</label><input id="sim-invname" value="Baba" oninput="calcSell()"></div>
+  </div>
+  <div class="tool-card">
+    <div class="tool-title">Breakdown</div>
+    <div id="sell-empty" class="hint-text">Fill in trade details above</div>
+    <div id="sell-content" style="display:none">
+      <div class="result-row"><span class="rr-l">Gross proceeds</span><span class="rr-v mono" id="r-gross">—</span></div>
+      <div class="result-row"><span class="rr-l">Cost basis</span><span class="rr-v mono" id="r-cost">—</span></div>
+      <div class="result-row"><span class="rr-l">Sarwa fee</span><span class="rr-v mono neg" id="r-fee">—</span></div>
+      <div class="divider"></div>
+      <div class="result-row"><span class="rr-l">Net proceeds</span><span class="rr-v mono" id="r-net">—</span></div>
+      <div class="divider"></div>
+      <div class="result-highlight">
+        <div class="rh-row"><span class="rh-label"><span style="display:inline-block;width:7px;height:7px;border-radius:50%;background:var(--blue)"></span>My share (net)</span><span class="rh-val pos" id="r-mynet">—</span></div>
+        <div class="rh-row"><span class="rh-label"><span style="display:inline-block;width:7px;height:7px;border-radius:50%;background:var(--amber)"></span><span id="r-invlabel">Investor (net)</span></span><span class="rh-val" id="r-invnet">—</span></div>
       </div>
+      <div class="divider"></div>
+      <div class="result-row"><span class="rr-l">My profit / loss</span><span class="rr-v mono" id="r-mypnl">—</span></div>
+      <div class="result-row"><span class="rr-l" id="r-invpnllabel">Investor P&L</span><span class="rr-v mono" id="r-invpnl">—</span></div>
     </div>
   </div>
 </div>
 
-<!-- ═══════════════ PROJECTIONS ═══════════════ -->
+<!-- ═══ PROJECTIONS ═══ -->
 <div id="pg-proj" class="page">
-  <div class="two-col">
-    <div class="tool-card">
-      <div class="tool-title">Price projections</div>
-      <div class="tool-sub">See share values at current and target prices</div>
-      <div class="fg" style="margin-bottom:12px">
-        <label>Load from my holdings</label>
-        <select id="proj-sel" onchange="fillProj()" style="padding:8px 11px;font-size:13px;font-family:'Inter',sans-serif;border:1px solid var(--border);border-radius:var(--rs);background:var(--white);color:var(--text);outline:none">
-          <option value="">— or enter manually —</option>
-        </select>
-      </div>
-      <div class="grid-2" style="margin-bottom:10px">
-        <div class="fg"><label>Total shares</label><input id="pj-shares" type="number" placeholder="10" step="0.0001" oninput="calcProj()"></div>
-        <div class="fg"><label>My split (%)</label><input id="pj-split" type="number" placeholder="60" oninput="calcProj()"></div>
-        <div class="fg"><label>Avg buy price ($)</label><input id="pj-buy" type="number" placeholder="0.00" step="0.01" oninput="calcProj()"></div>
-        <div class="fg"><label>Current price ($)</label><input id="pj-cur" type="number" placeholder="0.00" step="0.01" oninput="calcProj()"></div>
-        <div class="fg"><label>Target price ($)</label><input id="pj-tar" type="number" placeholder="0.00" step="0.01" oninput="calcProj()"></div>
-        <div class="fg"><label>Investor name</label><input id="pj-invname" value="Baba" oninput="calcProj()"></div>
-      </div>
+  <div class="tool-card">
+    <div class="tool-title">Price projections</div>
+    <div class="tool-sub">See share values at current and target prices</div>
+    <div class="fg"><label>Load from holding</label>
+      <select id="proj-sel" onchange="fillProj()"><option value="">— enter manually —</option></select>
     </div>
-
-    <div>
-      <div class="tool-card" style="margin-bottom:14px">
-        <div class="tool-title">At current price</div>
-        <div id="pj-cur-empty" class="hint-text">Fill in details</div>
-        <div id="pj-cur-content" style="display:none">
-          <div class="result-row"><span class="rr-l">Total position value</span><span class="rr-v mono" id="pjc-total">—</span></div>
-          <div class="result-highlight" style="margin-top:10px">
-            <div class="rh-row"><span class="rh-label"><span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:var(--blue);margin-right:4px"></span>My value</span><span class="rh-val" id="pjc-me">—</span></div>
-            <div class="rh-row"><span class="rh-label"><span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:var(--amber);margin-right:4px"></span><span id="pjc-inv-label">Investor value</span></span><span class="rh-val" id="pjc-inv">—</span></div>
-          </div>
-          <div class="divider"></div>
-          <div class="result-row"><span class="rr-l">My P&L vs cost</span><span class="rr-v mono" id="pjc-mypnl">—</span></div>
-        </div>
+    <div class="form-grid-2">
+      <div class="fg"><label>Total shares</label><input id="pj-shares" type="number" placeholder="10" step="0.0001" inputmode="decimal" oninput="calcProj()"></div>
+      <div class="fg"><label>My split (%)</label><input id="pj-split" type="number" placeholder="60" inputmode="decimal" oninput="calcProj()"></div>
+      <div class="fg"><label>Buy price ($)</label><input id="pj-buy" type="number" placeholder="0.00" step="0.01" inputmode="decimal" oninput="calcProj()"></div>
+      <div class="fg"><label>Current price ($)</label><input id="pj-cur" type="number" placeholder="0.00" step="0.01" inputmode="decimal" oninput="calcProj()"></div>
+      <div class="fg"><label>Target price ($)</label><input id="pj-tar" type="number" placeholder="0.00" step="0.01" inputmode="decimal" oninput="calcProj()"></div>
+      <div class="fg"><label>Investor name</label><input id="pj-invname" value="Baba" oninput="calcProj()"></div>
+    </div>
+  </div>
+  <div class="tool-card">
+    <div class="tool-title">At current price</div>
+    <div id="pj-cur-empty" class="hint-text">Fill in details above</div>
+    <div id="pj-cur-content" style="display:none">
+      <div class="result-row"><span class="rr-l">Total position</span><span class="rr-v mono" id="pjc-total">—</span></div>
+      <div class="result-highlight" style="margin-top:8px">
+        <div class="rh-row"><span class="rh-label"><span style="display:inline-block;width:7px;height:7px;border-radius:50%;background:var(--blue)"></span>My value</span><span class="rh-val" id="pjc-me">—</span></div>
+        <div class="rh-row"><span class="rh-label"><span style="display:inline-block;width:7px;height:7px;border-radius:50%;background:var(--amber)"></span><span id="pjc-inv-label">Investor</span></span><span class="rh-val" id="pjc-inv">—</span></div>
       </div>
-      <div class="tool-card">
-        <div class="tool-title">At target price</div>
-        <div id="pj-tar-empty" class="hint-text">Enter a target price</div>
-        <div id="pj-tar-content" style="display:none">
-          <div class="result-row"><span class="rr-l">Total position value</span><span class="rr-v mono" id="pjt-total">—</span></div>
-          <div class="result-highlight" style="margin-top:10px">
-            <div class="rh-row"><span class="rh-label"><span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:var(--blue);margin-right:4px"></span>My value</span><span class="rh-val" id="pjt-me">—</span></div>
-            <div class="rh-row"><span class="rh-label"><span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:var(--amber);margin-right:4px"></span><span id="pjt-inv-label">Investor value</span></span><span class="rh-val" id="pjt-inv">—</span></div>
-          </div>
-          <div class="divider"></div>
-          <div class="result-row"><span class="rr-l">My gain vs current</span><span class="rr-v mono" id="pjt-gain">—</span></div>
-          <div class="result-row"><span class="rr-l">Move required</span><span class="rr-v mono" id="pjt-move">—</span></div>
-        </div>
+      <div class="divider"></div>
+      <div class="result-row"><span class="rr-l">My P&L vs cost</span><span class="rr-v mono" id="pjc-mypnl">—</span></div>
+    </div>
+  </div>
+  <div class="tool-card">
+    <div class="tool-title">At target price</div>
+    <div id="pj-tar-empty" class="hint-text">Enter a target price</div>
+    <div id="pj-tar-content" style="display:none">
+      <div class="result-row"><span class="rr-l">Total position</span><span class="rr-v mono" id="pjt-total">—</span></div>
+      <div class="result-highlight" style="margin-top:8px">
+        <div class="rh-row"><span class="rh-label"><span style="display:inline-block;width:7px;height:7px;border-radius:50%;background:var(--blue)"></span>My value</span><span class="rh-val" id="pjt-me">—</span></div>
+        <div class="rh-row"><span class="rh-label"><span style="display:inline-block;width:7px;height:7px;border-radius:50%;background:var(--amber)"></span><span id="pjt-inv-label">Investor</span></span><span class="rh-val" id="pjt-inv">—</span></div>
       </div>
+      <div class="divider"></div>
+      <div class="result-row"><span class="rr-l">My gain vs current</span><span class="rr-v mono" id="pjt-gain">—</span></div>
+      <div class="result-row"><span class="rr-l">Move required</span><span class="rr-v mono" id="pjt-move">—</span></div>
     </div>
   </div>
 </div>
 
-<script>/* ── MARKET DATA (Alpha Vantage — NASDAQ ^IXIC) ── */
+<!-- PIN LOCK OVERLAY -->
+<div class="pin-overlay" id="pin-overlay">
+  <div class="pin-box">
+    <div class="pin-logo"><span class="pin-logo-dot"></span>SarwaDesk</div>
+    <div class="pin-title">Enter PIN to continue</div>
+    <div class="pin-sub">This portfolio is private</div>
+    <input class="pin-input" id="pin-input" type="password" maxlength="10" placeholder="••••••••" inputmode="text" autocomplete="off" onkeydown="if(event.key==='Enter')checkPin()">
+    <button class="pin-btn" onclick="checkPin()">Unlock</button>
+    <div class="pin-error" id="pin-error"></div>
+    <div class="pin-hint">Authorised users only</div>
+  </div>
+</div>
+
+<!-- BOTTOM NAV -->
+<nav class="bottom-nav">
+  <button class="bnav-btn active" onclick="showPage('dashboard',this)"><span class="bnav-icon">◈</span>Dashboard</button>
+  <button class="bnav-btn" onclick="showPage('holdings',this)"><span class="bnav-icon">≡</span>Holdings</button>
+  <button class="bnav-btn" onclick="showPage('partner',this)"><span class="bnav-icon">♀</span>Partner</button>
+  <button class="bnav-btn" onclick="showPage('sell',this)"><span class="bnav-icon">⟳</span>Sell</button>
+  <button class="bnav-btn" onclick="showPage('proj',this)"><span class="bnav-icon">↗</span>Project</button>
+</nav>
+
+<script>
+/* ── CASH BALANCES ── */
+let cashBalances = { me: 0, wife: 0, baba: 0 };
+
+function updateCash() {
+  cashBalances.me = parseFloat($('cash-me')?.value) || 0;
+  syncAllCashDisplays();
+}
+
+function syncCash(who, val) {
+  cashBalances[who] = parseFloat(val) || 0;
+  syncAllCashDisplays();
+}
+
+function syncAllCashDisplays() {
+  const usdFmt = n => '$' + n.toLocaleString('en-US', {minimumFractionDigits:2, maximumFractionDigits:2});
+  // Sync all inputs
+  ['cash-me','cash-me-fam','cash-me-com'].forEach(id => { const el=$(id); if(el && document.activeElement !== el) el.value = cashBalances.me || ''; });
+  ['cash-wife','cash-wife-com'].forEach(id => { const el=$(id); if(el && document.activeElement !== el) el.value = cashBalances.wife || ''; });
+  const bc=$('cash-baba'); if(bc && document.activeElement !== bc) bc.value = cashBalances.baba || '';
+  // Totals
+  const famTotal = $('cash-fam-total');
+  if(famTotal) famTotal.textContent = usdFmt(cashBalances.me + cashBalances.wife);
+  const comTotal = $('cash-com-total');
+  if(comTotal) comTotal.textContent = usdFmt(cashBalances.me + cashBalances.wife + cashBalances.baba);
+  scheduleSave();
+  // Update baba label from holdings investor name
+  const invNames = [...new Set(holdings.filter(h => h.invPct > 0).map(h => h.invName))];
+  const bl = $('cash-baba-label');
+  if(bl && invNames.length > 0) bl.textContent = invNames[0] + "'s cash";
+}
+
+/* ── PIN LOCK ── */
+const CORRECT_PIN = '71DPACE';
+const PIN_SESSION_KEY = 'sarwadesk_unlocked';
+
+function checkPin() {
+  const input = $('pin-input').value.trim();
+  if (input === CORRECT_PIN) {
+    try { sessionStorage.setItem(PIN_SESSION_KEY, '1'); } catch(e) {}
+    $('pin-overlay').classList.add('hidden');
+    $('pin-error').textContent = '';
+    initStorage();
+    fetchMarket();
+    setInterval(fetchMarket, 60000);
+  } else {
+    $('pin-input').classList.add('error');
+    $('pin-error').textContent = 'Incorrect PIN — try again';
+    $('pin-input').value = '';
+    setTimeout(() => $('pin-input').classList.remove('error'), 400);
+  }
+}
+
+function initPinLock() {
+  let unlocked = false;
+  try { unlocked = sessionStorage.getItem(PIN_SESSION_KEY) === '1'; } catch(e) {}
+  if (unlocked) {
+    $('pin-overlay').classList.add('hidden');
+    initStorage();
+  } else {
+    $('pin-overlay').classList.remove('hidden');
+    setTimeout(() => $('pin-input').focus(), 100);
+  }
+}
+
+/* ── CLOUD STORAGE (JSONBin) ── */
+const JBIN_MASTER = '$2a$10$74I7jJfeWcf8SoJm6jOQtedJwnaONH.yLfZzjo75/hxAOI4zYKJZK';
+const JBIN_KEY_NAME = 'sarwadesk_bin_id';
+let _binId = '';
+let _saveTimer = null;
+
+async function initStorage() {
+  try {
+    _binId = localStorage.getItem(JBIN_KEY_NAME) || '';
+    if (!_binId) {
+      // Create new bin
+      const r = await fetch('https://api.jsonbin.io/v3/b', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'X-Master-Key': JBIN_MASTER,
+          'X-Bin-Name': 'SarwaDesk-Portfolio',
+          'X-Private': 'false'
+        },
+        body: JSON.stringify({ holdings: [], wifeHoldings: [], cashBalances: { me:0, wife:0, baba:0 } })
+      });
+      const d = await r.json();
+      _binId = d?.metadata?.id;
+      if (_binId) {
+        localStorage.setItem(JBIN_KEY_NAME, _binId);
+        showStorageStatus('Portfolio storage created ✓', 'success');
+        showShareUrl();
+      }
+    } else {
+      await loadFromCloud();
+    }
+  } catch(e) {
+    console.warn('Storage init error:', e);
+    showStorageStatus('Offline mode — changes save locally only', 'warn');
+  }
+}
+
+async function loadFromCloud() {
+  if (!_binId) return;
+  try {
+    const r = await fetch(`https://api.jsonbin.io/v3/b/${_binId}/latest`, {
+      headers: { 'X-Master-Key': JBIN_MASTER }
+    });
+    const d = await r.json();
+    const rec = d?.record;
+    if (rec) {
+      holdings = rec.holdings || [];
+      wifeHoldings = rec.wifeHoldings || [];
+      cashBalances = rec.cashBalances || { me:0, wife:0, baba:0 };
+      renderHoldings();
+      renderPartner();
+      syncAllCashDisplays();
+      updateDashboard();
+      showStorageStatus('Portfolio loaded ✓', 'success');
+    }
+  } catch(e) {
+    console.warn('Load error:', e);
+    showStorageStatus('Could not load — check connection', 'warn');
+  }
+}
+
+function scheduleSave() {
+  clearTimeout(_saveTimer);
+  _saveTimer = setTimeout(saveToCloud, 1500);
+}
+
+function showShareUrl() {
+  const banner = $('share-banner');
+  const link = $('share-url');
+  if (!banner || !link || !_binId) return;
+  const url = window.location.href.split('?')[0] + '?bin=' + _binId;
+  link.href = url;
+  link.textContent = url;
+  banner.classList.remove('hidden');
+}
+
+async function saveToCloud() {
+  if (!_binId) return;
+  try {
+    showStorageStatus('Saving...', 'saving');
+    await fetch(`https://api.jsonbin.io/v3/b/${_binId}`, {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+        'X-Master-Key': JBIN_MASTER
+      },
+      body: JSON.stringify({ holdings, wifeHoldings, cashBalances })
+    });
+    showStorageStatus('Saved ✓', 'success');
+  } catch(e) {
+    showStorageStatus('Save failed — retrying...', 'warn');
+    _saveTimer = setTimeout(saveToCloud, 3000);
+  }
+}
+
+function showStorageStatus(msg, type) {
+  const el = $('storage-status');
+  if (!el) return;
+  el.textContent = msg;
+  el.className = 'storage-status storage-' + type;
+  if (type === 'success') setTimeout(() => { el.textContent = ''; el.className = 'storage-status'; }, 3000);
+}
+
+/* ── MARKET DATA (Alpha Vantage — NASDAQ ^IXIC) ── */
 async function fetchMarket() {
   const key = getApiKey();
   if (!key) { $('mkt-status-text').textContent = 'Enter API key to see live data'; return; }
@@ -631,12 +890,13 @@ const $ = id => document.getElementById(id);
 /* ── NAV ── */
 function showPage(id, btn) {
   document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-  document.querySelectorAll('.nav-tab').forEach(b => b.classList.remove('active'));
+  document.querySelectorAll('.nav-tab, .bnav-btn').forEach(b => b.classList.remove('active'));
   $('pg-' + id).classList.add('active');
   btn.classList.add('active');
   if (id === 'sell') populateSimSel();
   if (id === 'proj') populateProjSel();
   if (id === 'dashboard') updateDashboard();
+  window.scrollTo(0, 0);
 }
 
 function setView(v, btn) {
@@ -683,12 +943,7 @@ function saveApiKey() {
 }
 function checkApiKey() {
   const key = getApiKey();
-  if (key) {
-    $('api-key-bar').classList.add('hidden');
-    $('api-key-input').value = key;
-  } else {
-    $('api-key-bar').classList.remove('hidden');
-  }
+  $('api-key-bar').classList.add('hidden');
   return key;
 }
 
@@ -797,7 +1052,7 @@ function renderHoldings() {
       <td class="r mono" style="color:var(--muted)">${hasInv ? usd(invVal) : '—'}</td>
       <td class="r mono" style="color:var(--muted)">${hasInv ? invShares.toFixed(4) : '—'}</td>
       <td class="r"><span class="pill ${pnl >= 0 ? 'pill-pos' : 'pill-neg'}">${pct(ret)}</span></td>
-      <td><button class="btn-icon" onclick="holdings.splice(${i},1);renderHoldings()">✕</button></td>
+      <td><button class="btn-icon" onclick="holdings.splice(${i},1);renderHoldings();scheduleSave()">✕</button></td>
     </tr>`;
   }).join('');
   updateDashboard();
@@ -843,7 +1098,7 @@ function renderPartner() {
       <td class="r mono">${usd(val)}</td>
       <td class="r"><span class="${pnl >= 0 ? 'pos' : 'neg'} mono">${signed(pnl)}</span></td>
       <td class="r"><span class="pill ${pnl >= 0 ? 'pill-pos' : 'pill-neg'}">${pct(ret)}</span></td>
-      <td><button class="btn-icon" onclick="wifeHoldings.splice(${i},1);renderPartner()">✕</button></td>
+      <td><button class="btn-icon" onclick="wifeHoldings.splice(${i},1);renderPartner();scheduleSave()">✕</button></td>
     </tr>`;
   }).join('');
 
