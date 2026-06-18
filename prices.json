@@ -1,6 +1,13 @@
 {
-  "updatedAt": null,
-  "nextUpdate": null,
-  "market": {},
-  "prices": {}
+  "updatedAt": "2026-06-18T09:29:33.808Z",
+  "nextUpdate": "2026-06-18T09:34:33.808Z",
+  "market": {
+    "symbol": "QQQ",
+    "change": null,
+    "changePct": null
+  },
+  "prices": {},
+  "errors": [
+    "QQQ"
+  ]
 }
