@@ -677,7 +677,13 @@ select{padding:11px 12px;font-size:14px;font-family:'Inter',sans-serif;border:1p
 const $ = id => document.getElementById(id);
 
 /* ── MOBILE DETECTION ── */
-function isMobile() { return window.matchMedia('(pointer:coarse)').matches || /Android|iPhone|iPad|iPod/i.test(navigator.userAgent); }
+function isMobile() {
+  // S25 Ultra reports pointer:fine due to S Pen - use screen width + touch as fallback
+  const hasTouch = navigator.maxTouchPoints > 0 || 'ontouchstart' in window;
+  const isNarrow = window.innerWidth < 1024;
+  const isAndroid = /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
+  return isAndroid || hasTouch || isNarrow;
+}
 function applyMobileClasses() {
   const mobile = isMobile();
   document.querySelectorAll('.mobile-only').forEach(el => el.style.display = mobile ? '' : 'none');
