@@ -2,8 +2,11 @@ name: Update Stock Prices
 
 on:
   schedule:
-    - cron: '*/5 13-20 * * 1-5'  # Every 5 min, 1pm-8pm UTC (covers 9:30am-4pm EST)
-  workflow_dispatch:               # Also allow manual trigger
+    - cron: '*/5 13-20 * * 1-5'
+  workflow_dispatch:
+
+permissions:
+  contents: write
 
 jobs:
   update-prices:
