@@ -1,17 +1,17 @@
 name: Update Stock Prices
- 
+
 on:
   schedule:
     - cron: '*/5 13-20 * * 1-5'
   workflow_dispatch:
- 
+
 permissions:
   contents: write
- 
+
 concurrency:
   group: prices
   cancel-in-progress: false
- 
+
 jobs:
   update-prices:
     runs-on: ubuntu-latest
@@ -20,7 +20,8 @@ jobs:
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
- 
+          token: ${{ secrets.GITHUB_TOKEN }}
+
       - name: Fetch prices and update
         env:
           TIINGO_KEY: ${{ secrets.TIINGO_KEY }}
@@ -28,13 +29,13 @@ jobs:
           JSONBIN_BIN_ID: ${{ secrets.JSONBIN_BIN_ID }}
         run: |
           node .github/scripts/update-prices.js
- 
+
       - name: Commit updated prices
         run: |
           git config user.name "SarwaDesk Bot"
           git config user.email "bot@sarwadesk"
           git fetch origin main
-          git reset --soft origin/main
+          git checkout main
           git add prices.json
-          git diff --staged --quiet || git commit -m "Auto-update prices $(date -u '+%Y-%m-%d %H:%M UTC')"
-          git push origin main
+          git diff --staged --quiet || git commit -m "prices $(date -u '+%H:%M UTC')"
+          git push origin main --force-with-lease
