@@ -52,18 +52,6 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);font-
 .api-bar-btn{padding:8px 14px;font-size:13px;font-weight:500;border:1px solid var(--amber);border-radius:6px;background:var(--amber);color:#fff;cursor:pointer;font-family:'Inter',sans-serif;white-space:nowrap}
 .api-bar-link{color:var(--blue);text-decoration:none;font-size:11px;width:100%}
 
-/* ── MARKET BAR ── */
-.market-bar{background:var(--white);border-bottom:1px solid var(--border);padding:8px 16px;display:flex;align-items:center;gap:12px;font-size:12px;overflow-x:auto;-webkit-overflow-scrolling:touch;white-space:nowrap}
-.market-bar::-webkit-scrollbar{display:none}
-.mkt-index{display:flex;align-items:center;gap:6px}
-.mkt-label{font-weight:600;color:var(--muted);font-size:11px;text-transform:uppercase;letter-spacing:.04em}
-.mkt-price{font-weight:600;font-variant-numeric:tabular-nums;color:var(--text)}
-.mkt-change{font-weight:500;font-variant-numeric:tabular-nums}
-.mkt-change.pos{color:var(--green-text)}
-.mkt-change.neg{color:var(--red)}
-.mkt-divider{width:1px;height:14px;background:var(--border);flex-shrink:0}
-.mkt-status{display:flex;align-items:center;gap:4px;font-size:11px;color:var(--muted);flex-shrink:0}
-.mkt-live-dot{width:5px;height:5px;border-radius:50%;background:var(--green);animation:pulse 2s infinite;flex-shrink:0}
 @keyframes pulse{0%,100%{opacity:1}50%{opacity:.3}}
 
 /* ── PAGES ── */
@@ -180,19 +168,7 @@ td{padding:12px 12px;font-size:12px;color:var(--text);vertical-align:middle}
 .divider{height:1px;background:var(--border-lt);margin:10px 0}
 .hint-text{font-size:12px;color:var(--hint);text-align:center;padding:16px 0}
 
-/* ── MARKET CONTEXT CARD ── */
-.mkt-context{background:var(--white);border:1px solid var(--border);border-radius:var(--r);padding:14px 16px;margin-bottom:16px}
-.mkt-ctx-name{font-size:10px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.06em;margin-bottom:4px}
-.mkt-ctx-val{font-size:24px;font-weight:700;font-variant-numeric:tabular-nums;color:var(--text)}
-.mkt-ctx-chg{font-size:13px;font-weight:500;margin-bottom:12px}
-.mkt-ctx-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:12px}
-@media(min-width:480px){.mkt-ctx-stats{grid-template-columns:repeat(5,1fr)}}
-.mkt-ctx-stat-label{font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:.04em;margin-bottom:2px}
-.mkt-ctx-stat-val{font-size:13px;font-weight:600;font-variant-numeric:tabular-nums}
-.mkt-sentiment{display:flex;align-items:flex-start;gap:6px;padding:10px 12px;border-radius:var(--rs);font-size:12px;font-weight:500;line-height:1.4}
-.sent-bull{background:var(--green-bg);color:var(--green-text)}
-.sent-bear{background:var(--red-bg);color:var(--red)}
-.sent-flat{background:var(--bg);color:var(--muted)}
+/* market context card removed — data shown in ticker bar */
 
 /* ── CASH SECTION ── */
 .cash-section{margin-top:16px}
@@ -263,6 +239,10 @@ select{padding:11px 12px;font-size:14px;font-family:'Inter',sans-serif;border:1p
   </div>
   <div style="display:flex;align-items:center;gap:8px">
     <span id="storage-status" class="storage-status"></span>
+    <div id="nasdaq-badge" style="display:none;align-items:center;gap:4px;padding:5px 10px;border-radius:20px;font-size:12px;font-weight:600;border:1px solid var(--border)">
+      <span style="font-size:10px;color:var(--muted);font-weight:500">NASDAQ</span>
+      <span id="nasdaq-pct-badge">—</span>
+    </div>
     <button class="refresh-btn" onclick="refreshAll()">↻ Refresh</button>
   </div>
 </div>
@@ -275,32 +255,18 @@ select{padding:11px 12px;font-size:14px;font-family:'Inter',sans-serif;border:1p
   <a id="share-url" href="#" class="share-link" target="_blank"></a>
 </div>
 
-<!-- MARKET TICKER BAR -->
-<div class="market-bar">
-  <div class="mkt-index">
-    <span class="mkt-label">NASDAQ</span>
-    <span class="mkt-price" id="mkt-price">—</span>
-    <span class="mkt-change" id="mkt-pts">—</span>
-    <span class="mkt-change" id="mkt-pct">—</span>
-  </div>
-  <div class="mkt-divider"></div>
-  <div class="mkt-index"><span class="mkt-label">Range</span><span class="mkt-price" id="mkt-range">—</span></div>
-  <div class="mkt-divider"></div>
-  <div class="mkt-status"><span class="mkt-live-dot" id="mkt-dot" style="background:var(--hint)"></span><span id="mkt-status-text">Loading...</span></div>
-  <div class="mkt-divider"></div>
-  <span id="last-updated" style="font-size:11px;color:var(--hint)"></span>
-</div>
+
 
 <!-- ═══ DASHBOARD ═══ -->
 <div id="pg-dashboard" class="page active">
   <div class="view-toggle">
-    <button class="view-btn active" onclick="setView('me',this)">My portfolio</button>
+    <button class="view-btn" onclick="setView('me',this)">My portfolio</button>
     <button class="view-btn" onclick="setView('abbu',this)">Abbu's portfolio</button>
-    <button class="view-btn" onclick="setView('combined',this)">Combined</button>
+    <button class="view-btn active" onclick="setView('combined',this)">Combined</button>
   </div>
 
   <!-- ME VIEW -->
-  <div id="view-me" class="dash-view">
+  <div id="view-me" class="dash-view" style="display:none">
     <div class="hero">
       <div class="hero-eyebrow">My portfolio</div>
       <div class="hero-value" id="d-me-total">$0.00</div>
@@ -312,19 +278,7 @@ select{padding:11px 12px;font-size:14px;font-family:'Inter',sans-serif;border:1p
         <div class="hero-stat"><div class="hs-label">Return</div><div class="hs-val" id="d-me-ret">0.00%</div></div>
       </div>
     </div>
-    <div class="mkt-context">
-      <div class="mkt-ctx-name">NASDAQ — QQQ ETF</div>
-      <div class="mkt-ctx-val" id="mktc-price">—</div>
-      <div class="mkt-ctx-chg" id="mktc-chg">—</div>
-      <div class="mkt-ctx-stats">
-        <div><div class="mkt-ctx-stat-label">Chg pts</div><div class="mkt-ctx-stat-val" id="mktc-pts">—</div></div>
-        <div><div class="mkt-ctx-stat-label">Chg %</div><div class="mkt-ctx-stat-val" id="mktc-pct">—</div></div>
-        <div><div class="mkt-ctx-stat-label">Day low</div><div class="mkt-ctx-stat-val" id="mktc-low">—</div></div>
-        <div><div class="mkt-ctx-stat-label">Day high</div><div class="mkt-ctx-stat-val" id="mktc-high">—</div></div>
-        <div><div class="mkt-ctx-stat-label">Prev close</div><div class="mkt-ctx-stat-val" id="mktc-prev">—</div></div>
-      </div>
-      <div class="mkt-sentiment" id="mktc-sentiment"></div>
-    </div>
+
     <div class="card">
       <div class="tbl-wrap"><table>
         <thead><tr><th>Stock</th><th class="r">My shares</th><th class="r">Price</th><th class="r">My value</th><th class="r">P&L</th></tr></thead>
@@ -376,7 +330,7 @@ select{padding:11px 12px;font-size:14px;font-family:'Inter',sans-serif;border:1p
   </div>
 
   <!-- COMBINED VIEW -->
-  <div id="view-combined" class="dash-view" style="display:none">
+  <div id="view-combined" class="dash-view">
     <div class="hero">
       <div class="hero-eyebrow">Combined — You & Abbu</div>
       <div class="hero-value" id="d-com-total">$0.00</div>
@@ -630,6 +584,11 @@ function checkPin() {
     initStorage();
     fetchMarket();
     setInterval(fetchMarket, 5 * 60 * 1000);
+    // Default to combined view
+    document.querySelectorAll('.dash-view').forEach(d => d.style.display = 'none');
+    const cv = $('view-combined'); if(cv) cv.style.display = 'block';
+    document.querySelectorAll('.view-btn').forEach(b => b.classList.remove('active'));
+    document.querySelectorAll('.view-btn').forEach(b => { if(b.textContent.trim()==='Combined') b.classList.add('active'); });
   } else {
     $('pin-input').classList.add('error');
     $('pin-error').textContent = 'Incorrect PIN — try again';
@@ -778,9 +737,9 @@ async function fetchMarket() {
       const sent = $('mktc-sentiment');
       if (sent) {
         const ap = Math.abs(m.changePct||0);
-        if (ap < 0.3) { sent.className='mkt-sentiment sent-flat'; sent.textContent='➔  Market flat — moves today are likely stock-specific'; }
-        else if (isPos) { sent.className='mkt-sentiment sent-bull'; sent.textContent='▲  NASDAQ up ' + ap.toFixed(2) + '% — broad tailwind today'; }
-        else { sent.className='mkt-sentiment sent-bear'; sent.textContent='▼  NASDAQ down ' + ap.toFixed(2) + '% — broad headwind today'; }
+        if (ap < 0.3) { sent.style.color='var(--muted)'; sent.textContent='➔ Market flat'; }
+        else if (isPos) { sent.style.color='var(--green-text)'; sent.textContent='▲ NASDAQ +' + ap.toFixed(2) + '% — tailwind'; }
+        else { sent.style.color='var(--red)'; sent.textContent='▼ NASDAQ −' + ap.toFixed(2) + '% — headwind'; }
       }
     }
   } catch(e) {
