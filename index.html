@@ -844,46 +844,24 @@ async function fetchPrice(ticker) {
   return data?.prices?.[ticker.toUpperCase()]?.price || null;
 }
 
-/* ── MARKET DATA ── */
+/* ── MARKET DATA (compact badge only) ── */
 async function fetchMarket() {
   try {
     const data = await loadPricesJson();
-    if (!data || !data.market || !data.market.price) {
-      $('mkt-status-text').textContent = 'Waiting for price update...';
-      return;
-    }
+    if (!data || !data.market || !data.market.price) return;
     const m = data.market;
-    const isPos = (m.change || 0) >= 0;
-    const colorCls = isPos ? 'pos' : 'neg';
+    const isPos = (m.changePct || 0) >= 0;
     const sign = isPos ? '+' : '';
-    const fmt = n => (n == null || isNaN(n)) ? '—' : Number(n).toLocaleString('en-US', {minimumFractionDigits:2, maximumFractionDigits:2});
-    $('mkt-price').textContent = fmt(m.price);
-    $('mkt-pts').textContent = (isPos?'+':'') + fmt(Math.abs(m.change||0)) + ' pts';
-    $('mkt-pts').className = 'mkt-change ' + colorCls;
-    $('mkt-pct').textContent = '(' + sign + Math.abs(m.changePct||0).toFixed(2) + '%)';
-    $('mkt-pct').className = 'mkt-change ' + colorCls;
-    $('mkt-range').textContent = fmt(m.low) + ' – ' + fmt(m.high);
-    $('mkt-dot').style.background = 'var(--green)';
-    const ageMin = data.updatedAt ? (Date.now() - new Date(data.updatedAt).getTime()) / 60000 : 999;
-    $('mkt-status-text').textContent = ageMin < 10 ? 'Live · ' + Math.round(ageMin) + 'm ago' : 'Closed';
-    // Context card
-    if ($('mktc-price')) {
-      $('mktc-price').textContent = fmt(m.price);
-      const chgEl = $('mktc-chg');
-      if (chgEl) { chgEl.textContent = (isPos?'+':'') + fmt(Math.abs(m.change||0)) + ' (' + sign + Math.abs(m.changePct||0).toFixed(2) + '%)'; chgEl.className = 'mkt-ctx-chg ' + colorCls; }
-      setVal('mktc-pts', (isPos?'+':'−') + fmt(Math.abs(m.change||0)), colorCls);
-      setVal('mktc-pct', sign + Math.abs(m.changePct||0).toFixed(2) + '%', colorCls);
-      setVal('mktc-low', fmt(m.low)); setVal('mktc-high', fmt(m.high)); setVal('mktc-prev', fmt(m.prevClose));
-      const sent = $('mktc-sentiment');
-      if (sent) {
-        const ap = Math.abs(m.changePct||0);
-        if (ap < 0.3) { sent.style.color='var(--muted)'; sent.textContent='➔ Market flat'; }
-        else if (isPos) { sent.style.color='var(--green-text)'; sent.textContent='▲ NASDAQ +' + ap.toFixed(2) + '% — tailwind'; }
-        else { sent.style.color='var(--red)'; sent.textContent='▼ NASDAQ −' + ap.toFixed(2) + '% — headwind'; }
-      }
+    const badge = $('nasdaq-badge');
+    const pctEl = $('nasdaq-pct-badge');
+    if (badge && pctEl) {
+      pctEl.textContent = sign + Math.abs(m.changePct||0).toFixed(2) + '%';
+      pctEl.style.color = isPos ? 'var(--green-text)' : 'var(--red)';
+      badge.style.background = isPos ? 'var(--green-bg)' : 'var(--red-bg)';
+      badge.style.borderColor = isPos ? '#bbf7d0' : '#fecaca';
+      badge.style.display = 'flex';
     }
   } catch(e) {
-    $('mkt-status-text').textContent = 'Price data unavailable';
     console.warn('fetchMarket error:', e);
   }
 }
