@@ -27,6 +27,13 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);font-
 .share-banner.hidden{display:none}
 .share-text{color:var(--blue-text);flex:1;min-width:200px}
 .share-link{color:var(--blue);font-weight:600;word-break:break-all;font-size:11px}
+.desktop-nav{display:none;gap:3px}
+@media(min-width:768px){.desktop-nav{display:flex}}
+.dnav-btn{padding:7px 14px;font-size:13px;font-weight:500;color:var(--muted);border:none;background:none;cursor:pointer;border-radius:var(--rs);transition:all .15s;font-family:'Inter',sans-serif;white-space:nowrap}
+.dnav-btn:hover{background:var(--bg);color:var(--text)}
+.dnav-btn.active{background:var(--text);color:#fff}
+/* Hide bottom nav on desktop */
+@media(min-width:768px){.bottom-nav{display:none}}
 .refresh-btn{display:flex;align-items:center;gap:5px;padding:7px 11px;font-size:12px;font-weight:500;border:1px solid var(--border);border-radius:var(--rs);background:var(--white);color:var(--muted);cursor:pointer;white-space:nowrap;flex-shrink:0}
 .refresh-btn:active{background:var(--bg)}
 
@@ -249,7 +256,6 @@ select{padding:11px 12px;font-size:14px;font-family:'Inter',sans-serif;border:1p
 <div class="topbar">
   <div class="logo"><span class="logo-dot"></span>SarwaDesk</div>
   <div style="display:flex;align-items:center;gap:8px">
-  <span id="storage-status" class="storage-status"></span>
   <button class="refresh-btn" onclick="refreshAll()">↻ Refresh</button>
 </div>
 </div>
@@ -839,9 +845,12 @@ async function fetchMarket() {
 /* ── NAV ── */
 function showPage(id, btn) {
   document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-  document.querySelectorAll('.bnav-btn').forEach(b => b.classList.remove('active'));
+  document.querySelectorAll('.bnav-btn, .dnav-btn').forEach(b => b.classList.remove('active'));
   $('pg-' + id).classList.add('active');
-  btn.classList.add('active');
+  // Activate matching buttons in both navs
+  document.querySelectorAll('.bnav-btn, .dnav-btn').forEach(b => {
+    if (b.getAttribute('onclick') === btn.getAttribute('onclick')) b.classList.add('active');
+  });
   if (id === 'sell') populateSimSel();
   if (id === 'proj') populateProjSel();
   if (id === 'dashboard') updateDashboard();
