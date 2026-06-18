@@ -33,8 +33,8 @@ jobs:
         run: |
           git config user.name "SarwaDesk Bot"
           git config user.email "bot@sarwadesk"
-          git pull --rebase origin main
+          git fetch origin main
+          git reset --soft origin/main
           git add prices.json
           git diff --staged --quiet || git commit -m "Auto-update prices $(date -u '+%Y-%m-%d %H:%M UTC')"
-          git push
- 
+          git push origin main
