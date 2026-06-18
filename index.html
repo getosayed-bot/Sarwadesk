@@ -255,9 +255,17 @@ select{padding:11px 12px;font-size:14px;font-family:'Inter',sans-serif;border:1p
 
 <div class="topbar">
   <div class="logo"><span class="logo-dot"></span>SarwaDesk</div>
+  <div class="desktop-nav">
+    <button class="dnav-btn active" id="dnav-dashboard" onclick="showPage('dashboard',this)">Dashboard</button>
+    <button class="dnav-btn" id="dnav-holdings" onclick="showPage('holdings',this)">Holdings</button>
+    <button class="dnav-btn" id="dnav-partner" onclick="showPage('partner',this)">Partner</button>
+    <button class="dnav-btn" id="dnav-sell" onclick="showPage('sell',this)">Sell</button>
+    <button class="dnav-btn" id="dnav-proj" onclick="showPage('proj',this)">Projections</button>
+  </div>
   <div style="display:flex;align-items:center;gap:8px">
-  <button class="refresh-btn" onclick="refreshAll()">↻ Refresh</button>
-</div>
+    <span id="storage-status" class="storage-status"></span>
+    <button class="refresh-btn" onclick="refreshAll()">↻ Refresh</button>
+  </div>
 </div>
 
 <!-- API key handled server-side via GitHub Actions -->
