@@ -209,6 +209,58 @@ td{padding:12px 12px;font-size:12px;color:var(--text);vertical-align:middle}
 .storage-success{color:var(--green-text)}
 .storage-warn{color:var(--red)}
 
+/* ══════════════════════════════
+   MOBILE-FIRST REDESIGN
+══════════════════════════════ */
+
+/* Mobile stock cards instead of table */
+.stock-cards{display:flex;flex-direction:column;gap:10px;padding:12px}
+.stock-card{background:var(--white);border:1px solid var(--border);border-radius:var(--r);padding:14px 16px;display:flex;align-items:center;justify-content:space-between;gap:12px}
+.stock-card-left{display:flex;flex-direction:column;gap:3px;flex:1;min-width:0}
+.stock-card-ticker{font-size:15px;font-weight:700;color:var(--text)}
+.stock-card-name{font-size:11px;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.stock-card-shares{font-size:11px;color:var(--hint);margin-top:2px}
+.stock-card-right{display:flex;flex-direction:column;align-items:flex-end;gap:4px;flex-shrink:0}
+.stock-card-value{font-size:15px;font-weight:600;font-variant-numeric:tabular-nums}
+.stock-card-price{font-size:11px;color:var(--muted);font-variant-numeric:tabular-nums}
+
+/* Mobile hero — compact */
+.hero-mobile{background:var(--white);border-bottom:1px solid var(--border);padding:16px 16px 14px}
+.hero-mobile-label{font-size:11px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.06em;margin-bottom:4px}
+.hero-mobile-value{font-size:32px;font-weight:700;letter-spacing:-.02em;font-variant-numeric:tabular-nums;margin-bottom:12px}
+.hero-mobile-stats{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.hms{background:var(--bg);border-radius:var(--rs);padding:10px 12px}
+.hms-label{font-size:10px;color:var(--muted);margin-bottom:2px;text-transform:uppercase;letter-spacing:.04em}
+.hms-val{font-size:14px;font-weight:600;font-variant-numeric:tabular-nums}
+
+/* Swipe pill toggle */
+.pill-toggle{display:flex;background:var(--bg);border-radius:20px;padding:3px;margin:12px 16px;gap:2px}
+.pill-toggle-btn{flex:1;padding:7px 8px;font-size:12px;font-weight:500;color:var(--muted);border:none;background:none;cursor:pointer;border-radius:18px;transition:all .2s;font-family:'Inter',sans-serif;white-space:nowrap;text-align:center}
+.pill-toggle-btn.active{background:var(--white);color:var(--text);font-weight:600;box-shadow:0 1px 3px rgba(0,0,0,.1)}
+
+/* Mobile cash cards */
+.cash-row{display:flex;gap:10px;padding:0 16px 16px}
+.cash-mini{flex:1;background:var(--white);border:1px solid var(--border);border-radius:var(--r);padding:12px 14px}
+.cash-mini-label{font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:.04em;margin-bottom:6px;display:flex;align-items:center;gap:5px}
+.cash-mini-input{font-size:18px;font-weight:600;font-variant-numeric:tabular-nums;border:none;background:transparent;width:100%;font-family:'Inter',sans-serif;outline:none;color:var(--text);padding:0}
+.cash-mini-input::placeholder{color:var(--border)}
+
+/* Mobile add holding button */
+.mobile-add-btn{display:flex;align-items:center;justify-content:center;gap:8px;margin:0 16px 16px;padding:14px;background:var(--text);color:#fff;border:none;border-radius:var(--r);font-size:14px;font-weight:600;font-family:'Inter',sans-serif;cursor:pointer;width:calc(100% - 32px)}
+.mobile-add-btn:active{opacity:.85}
+
+/* Section label */
+.section-label{font-size:11px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.06em;padding:12px 16px 6px}
+
+/* Show/hide based on screen */
+.mobile-only{display:block}
+.desktop-only{display:none}
+@media(min-width:768px){
+  .mobile-only{display:none!important}
+  .desktop-only{display:block}
+  .desktop-flex{display:flex!important}
+}
+
 /* ── SELECT ── */
 select{padding:11px 12px;font-size:14px;font-family:'Inter',sans-serif;border:1px solid var(--border);border-radius:var(--rs);background:var(--white);color:var(--text);outline:none;width:100%;-webkit-appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%236b7280' stroke-width='2'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 12px center}
 
@@ -300,30 +352,55 @@ select{padding:11px 12px;font-size:14px;font-family:'Inter',sans-serif;border:1p
 
     <!-- ABBU VIEW -->
   <div id="view-abbu" class="dash-view" style="display:none">
-    <div class="hero">
-      <div class="hero-eyebrow">Abbu's portfolio</div>
-      <div class="hero-value" id="d-abbu-total">$0.00</div>
-      <div class="hero-sub">Abbu's share across all joint holdings</div>
-      <div class="hero-stats">
-        <div class="hero-stat"><div class="hs-label">Invested</div><div class="hs-val" id="d-abbu-invested">$0.00</div></div>
-        <div class="hero-stat"><div class="hs-label">Current value</div><div class="hs-val" id="d-abbu-value">$0.00</div></div>
-        <div class="hero-stat"><div class="hs-label">P&L</div><div class="hs-val" id="d-abbu-pnl">$0.00</div></div>
-        <div class="hero-stat"><div class="hs-label">Return</div><div class="hs-val" id="d-abbu-ret">0.00%</div></div>
+    <!-- MOBILE -->
+    <div class="hero-mobile mobile-only">
+      <div class="hero-mobile-label">Abbu's portfolio</div>
+      <div class="hero-mobile-value" id="d-abbu-total-m">$0.00</div>
+      <div class="hero-mobile-stats">
+        <div class="hms"><div class="hms-label">Invested</div><div class="hms-val" id="d-abbu-invested-m">$0.00</div></div>
+        <div class="hms"><div class="hms-label">Current value</div><div class="hms-val" id="d-abbu-value-m">$0.00</div></div>
+        <div class="hms"><div class="hms-label">P&L</div><div class="hms-val" id="d-abbu-pnl-m">$0.00</div></div>
+        <div class="hms"><div class="hms-label">Return</div><div class="hms-val" id="d-abbu-ret-m">0.00%</div></div>
       </div>
     </div>
-    <div class="card">
-      <div class="tbl-wrap"><table>
-        <thead><tr><th>Stock</th><th class="r">Abbu's shares</th><th class="r">Price</th><th class="r">Abbu's value</th><th class="r">P&L</th></tr></thead>
-        <tbody id="d-abbu-tbody"><tr><td colspan="5"><div class="empty-state">Add holdings to see Abbu's portfolio</div></td></tr></tbody>
-      </table></div>
+    <div class="mobile-only">
+      <div class="section-label">Abbu's holdings</div>
+      <div class="stock-cards" id="d-abbu-cards"><div style="text-align:center;padding:24px;color:var(--muted);font-size:13px">Add joint holdings to see Abbu's portfolio</div></div>
+      <div class="section-label">💵 Abbu's cash</div>
+      <div class="cash-row">
+        <div class="cash-mini" style="flex:1">
+          <div class="cash-mini-label"><div class="avatar av-baba" style="width:18px;height:18px;font-size:8px">AB</div>Abbu's cash</div>
+          <input class="cash-mini-input" type="number" id="cash-abbu-mob" placeholder="0.00" step="0.01" inputmode="decimal" oninput="syncCash('baba',this.value)">
+        </div>
+      </div>
     </div>
-    <div class="cash-section">
-      <div class="cash-section-title">💵 Abbu's cash on hand</div>
-      <div class="cash-grid">
-        <div class="cash-card">
-          <div class="cash-card-header"><div class="avatar av-baba">AB</div><div class="cash-card-name">Abbu's cash</div></div>
-          <input class="cash-amount-input" type="number" id="cash-abbu-view" placeholder="0.00" step="0.01" min="0" inputmode="decimal" oninput="syncCash('baba',this.value)">
-          <div class="cash-label">Available to invest</div>
+    <!-- DESKTOP -->
+    <div class="desktop-only">
+      <div class="hero">
+        <div class="hero-eyebrow">Abbu's portfolio</div>
+        <div class="hero-value" id="d-abbu-total">$0.00</div>
+        <div class="hero-sub">Abbu's share across all joint holdings</div>
+        <div class="hero-stats">
+          <div class="hero-stat"><div class="hs-label">Invested</div><div class="hs-val" id="d-abbu-invested">$0.00</div></div>
+          <div class="hero-stat"><div class="hs-label">Current value</div><div class="hs-val" id="d-abbu-value">$0.00</div></div>
+          <div class="hero-stat"><div class="hs-label">P&L</div><div class="hs-val" id="d-abbu-pnl">$0.00</div></div>
+          <div class="hero-stat"><div class="hs-label">Return</div><div class="hs-val" id="d-abbu-ret">0.00%</div></div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="tbl-wrap"><table>
+          <thead><tr><th>Stock</th><th class="r">Abbu's shares</th><th class="r">Price</th><th class="r">Abbu's value</th><th class="r">P&L</th></tr></thead>
+          <tbody id="d-abbu-tbody"><tr><td colspan="5"><div class="empty-state">Add holdings to see Abbu's portfolio</div></td></tr></tbody>
+        </table></div>
+      </div>
+      <div class="cash-section">
+        <div class="cash-section-title">💵 Abbu's cash on hand</div>
+        <div class="cash-grid">
+          <div class="cash-card">
+            <div class="cash-card-header"><div class="avatar av-baba">AB</div><div class="cash-card-name">Abbu's cash</div></div>
+            <input class="cash-amount-input" type="number" id="cash-abbu-view" placeholder="0.00" step="0.01" min="0" inputmode="decimal" oninput="syncCash('baba',this.value)">
+            <div class="cash-label">Available to invest</div>
+          </div>
         </div>
       </div>
     </div>
@@ -331,7 +408,19 @@ select{padding:11px 12px;font-size:14px;font-family:'Inter',sans-serif;border:1p
 
   <!-- COMBINED VIEW -->
   <div id="view-combined" class="dash-view">
-    <div class="hero">
+    <!-- MOBILE HERO -->
+    <div class="hero-mobile mobile-only">
+      <div class="hero-mobile-label">Combined — You & Abbu</div>
+      <div class="hero-mobile-value" id="d-com-total-m">$0.00</div>
+      <div class="hero-mobile-stats">
+        <div class="hms"><div class="hms-label">Your value</div><div class="hms-val" id="d-com-me-m">$0.00</div></div>
+        <div class="hms"><div class="hms-label">Abbu's value</div><div class="hms-val" id="d-com-inv-m">$0.00</div></div>
+        <div class="hms"><div class="hms-label">Total P&L</div><div class="hms-val" id="d-com-pnl-m">$0.00</div></div>
+        <div class="hms"><div class="hms-label">Return</div><div class="hms-val" id="d-com-ret-m">0.00%</div></div>
+      </div>
+    </div>
+    <!-- DESKTOP HERO -->
+    <div class="hero desktop-only">
       <div class="hero-eyebrow">Combined — You & Abbu</div>
       <div class="hero-value" id="d-com-total">$0.00</div>
       <div class="hero-sub">Total investments — you and Abbu combined</div>
@@ -342,6 +431,24 @@ select{padding:11px 12px;font-size:14px;font-family:'Inter',sans-serif;border:1p
         <div class="hero-stat"><div class="hs-label">Return</div><div class="hs-val" id="d-com-ret">0.00%</div></div>
       </div>
     </div>
+    <!-- MOBILE combined cards -->
+    <div class="mobile-only">
+      <div class="section-label">All holdings</div>
+      <div class="stock-cards" id="d-com-cards"><div style="text-align:center;padding:24px;color:var(--muted);font-size:13px">Add holdings to see combined portfolio</div></div>
+      <div class="section-label">💵 Cash on hand</div>
+      <div class="cash-row">
+        <div class="cash-mini">
+          <div class="cash-mini-label"><div class="avatar av-me" style="width:18px;height:18px;font-size:8px">OS</div>My cash</div>
+          <input class="cash-mini-input" type="number" id="cash-me-com-mob" placeholder="0.00" step="0.01" inputmode="decimal" oninput="syncCash('me',this.value)">
+        </div>
+        <div class="cash-mini">
+          <div class="cash-mini-label"><div class="avatar av-baba" style="width:18px;height:18px;font-size:8px">AB</div>Abbu</div>
+          <input class="cash-mini-input" type="number" id="cash-baba-com-mob" placeholder="0.00" step="0.01" inputmode="decimal" oninput="syncCash('baba',this.value)">
+        </div>
+      </div>
+    </div>
+    <!-- DESKTOP person cards -->
+    <div class="desktop-only">
     <div class="person-grid">
       <div class="person-card">
         <div class="pc-header"><div class="avatar av-me">OS</div><div><div class="pc-name">You</div><div class="pc-role">Primary</div></div></div>
@@ -355,7 +462,9 @@ select{padding:11px 12px;font-size:14px;font-family:'Inter',sans-serif;border:1p
         <div class="pc-stat"><div class="pc-stat-label">P&L</div><div class="pc-stat-val" id="d-com-inv-pnl">$0.00</div></div>
       </div>
     </div>
-    <div class="cash-section">
+    </div><!-- end desktop person grid -->
+    </div><!-- end desktop-only -->
+    <div class="cash-section desktop-only">
       <div class="cash-section-title">💵 Cash on hand</div>
       <div class="cash-grid">
         <div class="cash-card">
@@ -382,6 +491,13 @@ select{padding:11px 12px;font-size:14px;font-family:'Inter',sans-serif;border:1p
   <div class="sec-head">
     <div><div class="sec-title">My holdings</div><div class="sec-meta" id="h-count">0 positions</div></div>
   </div>
+  <!-- MOBILE HOLDINGS -->
+  <div class="mobile-only">
+    <div class="stock-cards" id="holdings-cards"><div style="text-align:center;padding:32px;color:var(--muted);font-size:13px">No holdings yet</div></div>
+    <button class="mobile-add-btn" onclick="toggleForm('add-form-my')">＋ Add holding</button>
+  </div>
+  <!-- DESKTOP TABLE -->
+  <div class="desktop-only">
   <div class="card">
     <div class="tbl-wrap"><table>
       <thead><tr>
@@ -443,6 +559,7 @@ select{padding:11px 12px;font-size:14px;font-family:'Inter',sans-serif;border:1p
       <button class="add-trigger" onclick="toggleForm('add-form-my')">＋ Add a holding</button>
     </div>
   </div>
+  </div><!-- end desktop-only -->
 </div>
 
 <!-- ═══ SELL SIMULATOR ═══ -->
@@ -634,7 +751,7 @@ async function loadFromCloud() {
       holdings = rec.holdings || [];
       wifeHoldings = rec.wifeHoldings || [];
       cashBalances = rec.cashBalances || { me:0, wife:0, baba:0 };
-      renderHoldings(); renderPartner(); syncAllCashDisplays(); updateDashboard();
+      renderHoldings(); renderPartner(); renderMobileCards(); syncAllCashDisplays(); updateDashboard();
       showStorageStatus('Portfolio loaded ✓', 'success');
     }
   } catch(e) { console.warn('Load error:', e); showStorageStatus('Could not load', 'warn'); }
@@ -842,7 +959,39 @@ function renderHoldings() {
       <td><button class="btn-icon" onclick="holdings.splice(${i},1);renderHoldings();scheduleSave()">✕</button></td>
     </tr>`;
   }).join('');
+  renderMobileCards();
   updateDashboard();
+}
+
+function renderMobileCards() {
+  // Holdings page mobile cards
+  const hc = $('holdings-cards');
+  if (hc) {
+    if (!holdings.length) {
+      hc.innerHTML = '<div style="text-align:center;padding:32px;color:var(--muted);font-size:13px">No holdings yet — tap Add holding</div>';
+    } else {
+      hc.innerHTML = holdings.map((h,i) => {
+        const price = h.live || h.buyPrice;
+        const totalVal = h.totalShares * price;
+        const myVal = totalVal * (h.mePct/100);
+        const myCost = h.totalShares * h.buyPrice * (h.mePct/100);
+        const pnl = myVal - myCost;
+        const ret = myCost > 0 ? (pnl/myCost)*100 : 0;
+        const livePrice = h.live ? `<span class="live-dot"></span>${usd(h.live)}` : usd(h.buyPrice);
+        return `<div class="stock-card">
+          <div class="stock-card-left">
+            <div class="stock-card-ticker">${h.ticker}</div>
+            <div class="stock-card-name">${h.name}</div>
+            <div class="stock-card-shares">${(h.totalShares*(h.mePct/100)).toFixed(4)} shares · ${livePrice}</div>
+          </div>
+          <div class="stock-card-right">
+            <div class="stock-card-value">${usd(myVal)}</div>
+            <span class="pill ${pnl>=0?'pill-pos':'pill-neg'}">${pct(ret)}</span>
+          </div>
+        </div>`;
+      }).join('');
+    }
+  }
 }
 
 /* ── ADD WIFE HOLDING ── */
@@ -910,6 +1059,22 @@ function updateDashboard() {
   setVal('d-abbu-total', usd(abbuVal)); setVal('d-abbu-invested', usd(abbuInvested));
   setVal('d-abbu-value', usd(abbuVal)); setVal('d-abbu-pnl', signed(abbuPnl), colorClass(abbuPnl));
   setVal('d-abbu-ret', pct(abbuRet), colorClass(abbuPnl));
+  // Mobile abbu values
+  setVal('d-abbu-total-m', usd(abbuVal)); setVal('d-abbu-invested-m', usd(abbuInvested));
+  setVal('d-abbu-value-m', usd(abbuVal)); setVal('d-abbu-pnl-m', signed(abbuPnl), colorClass(abbuPnl));
+  setVal('d-abbu-ret-m', pct(abbuRet), colorClass(abbuPnl));
+  const abbuMob = $('d-abbu-cards');
+  if (abbuMob) {
+    const jh = holdings.filter(h=>h.invPct>0);
+    if (!jh.length) { abbuMob.innerHTML='<div style="text-align:center;padding:24px;color:var(--muted);font-size:13px">No joint holdings yet</div>'; }
+    else { abbuMob.innerHTML = jh.map(h => {
+      const price=h.live||h.buyPrice, totalVal=h.totalShares*price;
+      const av=totalVal*(h.invPct/100), ac=h.totalShares*h.buyPrice*(h.invPct/100);
+      const pnl=av-ac, ret=ac>0?(pnl/ac)*100:0;
+      const lp=h.live?`<span class="live-dot"></span>${usd(h.live)}`:usd(h.buyPrice);
+      return `<div class="stock-card"><div class="stock-card-left"><div class="stock-card-ticker">${h.ticker}</div><div class="stock-card-name">${h.name}</div><div class="stock-card-shares">${(h.totalShares*(h.invPct/100)).toFixed(4)} shares · ${lp}</div></div><div class="stock-card-right"><div class="stock-card-value">${usd(av)}</div><span class="pill ${pnl>=0?'pill-pos':'pill-neg'}">${pct(ret)}</span></div></div>`;
+    }).join(''); }
+  }
   const abbuTb = $('d-abbu-tbody');
   if (abbuTb) {
     if (!holdings.filter(h=>h.invPct>0).length) {
@@ -929,6 +1094,22 @@ function updateDashboard() {
   setVal('d-me-total', usd(meVal)); setVal('d-me-invested', usd(meInvested));
   setVal('d-me-value', usd(meVal)); setVal('d-me-pnl', signed(mePnl), colorClass(mePnl));
   setVal('d-me-ret', pct(meRet), colorClass(mePnl));
+  // Mobile me values
+  setVal('d-me-total-m', usd(meVal)); setVal('d-me-invested-m', usd(meInvested));
+  setVal('d-me-value-m', usd(meVal)); setVal('d-me-pnl-m', signed(mePnl), colorClass(mePnl));
+  setVal('d-me-ret-m', pct(meRet), colorClass(mePnl));
+  // Mobile me stock cards
+  const meMob = $('d-me-cards');
+  if (meMob) {
+    if (!holdings.length) { meMob.innerHTML='<div style="text-align:center;padding:24px;color:var(--muted);font-size:13px">Add holdings to see your portfolio</div>'; }
+    else { meMob.innerHTML = holdings.map(h => {
+      const price=h.live||h.buyPrice, totalVal=h.totalShares*price;
+      const myVal=totalVal*(h.mePct/100), myCost=h.totalShares*h.buyPrice*(h.mePct/100);
+      const pnl=myVal-myCost, ret=myCost>0?(pnl/myCost)*100:0;
+      const lp=h.live?`<span class="live-dot"></span>${usd(h.live)}`:usd(h.buyPrice);
+      return `<div class="stock-card"><div class="stock-card-left"><div class="stock-card-ticker">${h.ticker}</div><div class="stock-card-name">${h.name}</div><div class="stock-card-shares">${(h.totalShares*(h.mePct/100)).toFixed(4)} shares · ${lp}</div></div><div class="stock-card-right"><div class="stock-card-value">${usd(myVal)}</div><span class="pill ${pnl>=0?'pill-pos':'pill-neg'}">${pct(ret)}</span></div></div>`;
+    }).join(''); }
+  }
   const meTb = $('d-me-tbody');
   if (meTb) {
     if (!holdings.length) { meTb.innerHTML='<tr><td colspan="5"><div class="empty-state">Add holdings to see your portfolio</div></td></tr>'; }
@@ -949,6 +1130,20 @@ function updateDashboard() {
   setVal('d-com-ret', pct(comRet), colorClass(comPnl));
   setVal('d-com-me-val', usd(meVal)); setVal('d-com-me-pnl', signed(mePnl), colorClass(mePnl));
   setVal('d-com-inv-val', usd(invVal)); setVal('d-com-inv-pnl', signed(invPnl), colorClass(invPnl));
+  // Mobile combined
+  setVal('d-com-total-m', usd(comTotal)); setVal('d-com-me-m', usd(meVal));
+  setVal('d-com-inv-m', usd(invVal)); setVal('d-com-pnl-m', signed(comPnl), colorClass(comPnl));
+  setVal('d-com-ret-m', pct(comRet), colorClass(comPnl));
+  const comMob = $('d-com-cards');
+  if (comMob) {
+    if (!holdings.length) { comMob.innerHTML='<div style="text-align:center;padding:24px;color:var(--muted);font-size:13px">Add holdings to see combined portfolio</div>'; }
+    else { comMob.innerHTML = holdings.map(h => {
+      const price=h.live||h.buyPrice, totalVal=h.totalShares*price;
+      const cost=h.totalShares*h.buyPrice, pnl=totalVal-cost, ret=cost>0?(pnl/cost)*100:0;
+      const lp=h.live?`<span class="live-dot"></span>${usd(h.live)}`:usd(h.buyPrice);
+      return `<div class="stock-card"><div class="stock-card-left"><div class="stock-card-ticker">${h.ticker}</div><div class="stock-card-name">${h.name}</div><div class="stock-card-shares">${h.totalShares.toFixed(4)} shares · ${lp}</div></div><div class="stock-card-right"><div class="stock-card-value">${usd(totalVal)}</div><span class="pill ${pnl>=0?'pill-pos':'pill-neg'}">${pct(ret)}</span></div></div>`;
+    }).join(''); }
+  }
   const invNames = [...new Set(holdings.filter(h=>h.invPct>0).map(h=>h.invName))];
   if (invNames.length > 0) { const n=invNames[0]; setVal('d-com-inv-name', n); const av=$('d-com-inv-avatar'); if(av) av.textContent=n[0].toUpperCase(); }
   syncAllCashDisplays();
@@ -965,8 +1160,8 @@ function syncCash(who, val) {
 }
 function syncAllCashDisplays() {
   const usdFmt = n => '$' + n.toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2});
-  ['cash-me','cash-me-com'].forEach(id => { const el=$(id); if(el&&document.activeElement!==el) el.value=cashBalances.me||''; });
-  ['cash-baba','cash-baba-me','cash-abbu-view'].forEach(id => { const el=$(id); if(el&&document.activeElement!==el) el.value=cashBalances.baba||''; });
+  ['cash-me','cash-me-com','cash-me-mob','cash-me-com-mob'].forEach(id => { const el=$(id); if(el&&document.activeElement!==el) el.value=cashBalances.me||''; });
+  ['cash-baba','cash-baba-me','cash-abbu-view','cash-baba-mob','cash-abbu-mob','cash-baba-com-mob'].forEach(id => { const el=$(id); if(el&&document.activeElement!==el) el.value=cashBalances.baba||''; });
   // Update investor name labels dynamically
   const invNames = [...new Set(holdings.filter(h=>h.invPct>0).map(h=>h.invName))];
   const invName = invNames.length ? invNames[0] : 'Investor';
