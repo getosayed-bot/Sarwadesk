@@ -646,6 +646,9 @@ select{padding:11px 12px;font-size:14px;font-family:'Inter',sans-serif;border:1p
 </nav>
 
 <script>
+/* ── CORE HELPERS ── */
+const $ = id => document.getElementById(id);
+
 /* ── CASH BALANCES ── */
 let cashBalances = { me: 0, wife: 0, baba: 0 };
 
@@ -689,7 +692,7 @@ function checkPin() {
     $('pin-error').textContent = '';
     initStorage();
     fetchMarket();
-    setInterval(fetchMarket, 60000);
+    setInterval(fetchMarket, 5 * 60 * 1000);
   } else {
     $('pin-input').classList.add('error');
     $('pin-error').textContent = 'Incorrect PIN — try again';
@@ -704,6 +707,8 @@ function initPinLock() {
   if (unlocked) {
     $('pin-overlay').classList.add('hidden');
     initStorage();
+    fetchMarket();
+    setInterval(fetchMarket, 5 * 60 * 1000);
   } else {
     $('pin-overlay').classList.remove('hidden');
     setTimeout(() => $('pin-input').focus(), 100);
@@ -874,8 +879,7 @@ async function fetchMarket() {
   }
 }
 
-fetchMarket();
-setInterval(fetchMarket, 60000);
+// fetchMarket called after PIN unlock via initPinLock()
 </script>
 </body>
 </html>
