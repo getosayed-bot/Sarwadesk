@@ -258,7 +258,6 @@ select{padding:11px 12px;font-size:14px;font-family:'Inter',sans-serif;border:1p
   <div class="desktop-nav">
     <button class="dnav-btn active" id="dnav-dashboard" onclick="showPage('dashboard',this)">Dashboard</button>
     <button class="dnav-btn" id="dnav-holdings" onclick="showPage('holdings',this)">Holdings</button>
-    <button class="dnav-btn" id="dnav-partner" onclick="showPage('partner',this)">Partner</button>
     <button class="dnav-btn" id="dnav-sell" onclick="showPage('sell',this)">Sell</button>
     <button class="dnav-btn" id="dnav-proj" onclick="showPage('proj',this)">Projections</button>
   </div>
@@ -296,7 +295,7 @@ select{padding:11px 12px;font-size:14px;font-family:'Inter',sans-serif;border:1p
 <div id="pg-dashboard" class="page active">
   <div class="view-toggle">
     <button class="view-btn active" onclick="setView('me',this)">My portfolio</button>
-    <button class="view-btn" onclick="setView('family',this)">Family</button>
+    <button class="view-btn" onclick="setView('abbu',this)">Abbu's portfolio</button>
     <button class="view-btn" onclick="setView('combined',this)">Combined</button>
   </div>
 
@@ -344,48 +343,34 @@ select{padding:11px 12px;font-size:14px;font-family:'Inter',sans-serif;border:1p
     </div>
   </div>
 
-  <!-- FAMILY VIEW -->
-  <div id="view-family" class="dash-view" style="display:none">
+
+    <!-- ABBU VIEW -->
+  <div id="view-abbu" class="dash-view" style="display:none">
     <div class="hero">
-      <div class="hero-eyebrow">Family — You & Wife</div>
-      <div class="hero-value" id="d-fam-total">$0.00</div>
-      <div class="hero-sub">Combined investments (excluding cash) · Total: <span id="p-combined">$0.00</span></div>
+      <div class="hero-eyebrow">Abbu's portfolio</div>
+      <div class="hero-value" id="d-abbu-total">$0.00</div>
+      <div class="hero-sub">Abbu's share across all joint holdings</div>
       <div class="hero-stats">
-        <div class="hero-stat"><div class="hs-label">Your value</div><div class="hs-val" id="d-fam-me">$0.00</div></div>
-        <div class="hero-stat"><div class="hs-label">Wife's value</div><div class="hs-val" id="d-fam-wife">$0.00</div></div>
-        <div class="hero-stat"><div class="hs-label">Family P&L</div><div class="hs-val" id="d-fam-pnl">$0.00</div></div>
-        <div class="hero-stat"><div class="hs-label">Return</div><div class="hs-val" id="d-fam-ret">0.00%</div></div>
+        <div class="hero-stat"><div class="hs-label">Invested</div><div class="hs-val" id="d-abbu-invested">$0.00</div></div>
+        <div class="hero-stat"><div class="hs-label">Current value</div><div class="hs-val" id="d-abbu-value">$0.00</div></div>
+        <div class="hero-stat"><div class="hs-label">P&L</div><div class="hs-val" id="d-abbu-pnl">$0.00</div></div>
+        <div class="hero-stat"><div class="hs-label">Return</div><div class="hs-val" id="d-abbu-ret">0.00%</div></div>
       </div>
     </div>
-    <div class="person-grid">
-      <div class="person-card">
-        <div class="pc-header"><div class="avatar av-me">OS</div><div><div class="pc-name">You</div><div class="pc-role">Primary</div></div></div>
-        <div class="pc-stat"><div class="pc-stat-label">Current value</div><div class="pc-stat-val" id="d-fam-me-val">$0.00</div></div>
-        <div class="pc-stat"><div class="pc-stat-label">P&L</div><div class="pc-stat-val" id="d-fam-me-pnl">$0.00</div></div>
-      </div>
-      <div class="person-card">
-        <div class="pc-header"><div class="avatar av-wife">W</div><div><div class="pc-name">Wife</div><div class="pc-role">Partner</div></div></div>
-        <div class="pc-stat"><div class="pc-stat-label">Current value</div><div class="pc-stat-val" id="d-fam-wife-val">$0.00</div></div>
-        <div class="pc-stat"><div class="pc-stat-label">P&L</div><div class="pc-stat-val" id="d-fam-wife-pnl">$0.00</div></div>
-      </div>
+    <div class="card">
+      <div class="tbl-wrap"><table>
+        <thead><tr><th>Stock</th><th class="r">Abbu's shares</th><th class="r">Price</th><th class="r">Abbu's value</th><th class="r">P&L</th></tr></thead>
+        <tbody id="d-abbu-tbody"><tr><td colspan="5"><div class="empty-state">Add holdings to see Abbu's portfolio</div></td></tr></tbody>
+      </table></div>
     </div>
     <div class="cash-section">
-      <div class="cash-section-title">💵 Cash on hand</div>
+      <div class="cash-section-title">💵 Abbu's cash on hand</div>
       <div class="cash-grid">
         <div class="cash-card">
-          <div class="cash-card-header"><div class="avatar av-me">OS</div><div class="cash-card-name">My cash</div></div>
-          <input class="cash-amount-input" type="number" id="cash-me-fam" placeholder="0.00" step="0.01" min="0" inputmode="decimal" oninput="syncCash('me',this.value)">
+          <div class="cash-card-header"><div class="avatar av-baba">AB</div><div class="cash-card-name">Abbu's cash</div></div>
+          <input class="cash-amount-input" type="number" id="cash-abbu-view" placeholder="0.00" step="0.01" min="0" inputmode="decimal" oninput="syncCash('baba',this.value)">
           <div class="cash-label">Available to invest</div>
         </div>
-        <div class="cash-card">
-          <div class="cash-card-header"><div class="avatar av-wife">W</div><div class="cash-card-name">Wife's cash</div></div>
-          <input class="cash-amount-input" type="number" id="cash-wife" placeholder="0.00" step="0.01" min="0" inputmode="decimal" oninput="syncCash('wife',this.value)">
-          <div class="cash-label">Available to invest</div>
-        </div>
-      </div>
-      <div class="cash-total">
-        <span class="cash-total-label">Total family cash</span>
-        <span class="cash-total-val" id="cash-fam-total">$0.00</span>
       </div>
     </div>
   </div>
@@ -393,14 +378,14 @@ select{padding:11px 12px;font-size:14px;font-family:'Inter',sans-serif;border:1p
   <!-- COMBINED VIEW -->
   <div id="view-combined" class="dash-view" style="display:none">
     <div class="hero">
-      <div class="hero-eyebrow">Combined — You, Wife & Investor</div>
+      <div class="hero-eyebrow">Combined — You & Abbu</div>
       <div class="hero-value" id="d-com-total">$0.00</div>
-      <div class="hero-sub">Total investments across all three parties</div>
+      <div class="hero-sub">Total investments — you and Abbu combined</div>
       <div class="hero-stats">
         <div class="hero-stat"><div class="hs-label">Your value</div><div class="hs-val" id="d-com-me">$0.00</div></div>
-        <div class="hero-stat"><div class="hs-label">Wife's value</div><div class="hs-val" id="d-com-wife">$0.00</div></div>
-        <div class="hero-stat"><div class="hs-label">Investor</div><div class="hs-val" id="d-com-inv">$0.00</div></div>
+        <div class="hero-stat"><div class="hs-label">Abbu's value</div><div class="hs-val" id="d-com-inv">$0.00</div></div>
         <div class="hero-stat"><div class="hs-label">Total P&L</div><div class="hs-val" id="d-com-pnl">$0.00</div></div>
+        <div class="hero-stat"><div class="hs-label">Return</div><div class="hs-val" id="d-com-ret">0.00%</div></div>
       </div>
     </div>
     <div class="person-grid">
@@ -409,13 +394,9 @@ select{padding:11px 12px;font-size:14px;font-family:'Inter',sans-serif;border:1p
         <div class="pc-stat"><div class="pc-stat-label">Value</div><div class="pc-stat-val" id="d-com-me-val">$0.00</div></div>
         <div class="pc-stat"><div class="pc-stat-label">P&L</div><div class="pc-stat-val" id="d-com-me-pnl">$0.00</div></div>
       </div>
+
       <div class="person-card">
-        <div class="pc-header"><div class="avatar av-wife">W</div><div><div class="pc-name">Wife</div><div class="pc-role">Partner</div></div></div>
-        <div class="pc-stat"><div class="pc-stat-label">Value</div><div class="pc-stat-val" id="d-com-wife-val">$0.00</div></div>
-        <div class="pc-stat"><div class="pc-stat-label">P&L</div><div class="pc-stat-val" id="d-com-wife-pnl">$0.00</div></div>
-      </div>
-      <div class="person-card">
-        <div class="pc-header"><div class="avatar av-baba" id="d-com-inv-avatar">B</div><div><div class="pc-name" id="d-com-inv-name">Investor</div><div class="pc-role">Joint holdings</div></div></div>
+        <div class="pc-header"><div class="avatar av-baba" id="d-com-inv-avatar">B</div><div><div class="pc-name" id="d-com-inv-name">Abbu</div><div class="pc-role">Joint holdings</div></div></div>
         <div class="pc-stat"><div class="pc-stat-label">Value</div><div class="pc-stat-val" id="d-com-inv-val">$0.00</div></div>
         <div class="pc-stat"><div class="pc-stat-label">P&L</div><div class="pc-stat-val" id="d-com-inv-pnl">$0.00</div></div>
       </div>
@@ -429,12 +410,7 @@ select{padding:11px 12px;font-size:14px;font-family:'Inter',sans-serif;border:1p
           <div class="cash-label">Available to invest</div>
         </div>
         <div class="cash-card">
-          <div class="cash-card-header"><div class="avatar av-wife">W</div><div class="cash-card-name">Wife's cash</div></div>
-          <input class="cash-amount-input" type="number" id="cash-wife-com" placeholder="0.00" step="0.01" min="0" inputmode="decimal" oninput="syncCash('wife',this.value)">
-          <div class="cash-label">Available to invest</div>
-        </div>
-        <div class="cash-card">
-          <div class="cash-card-header"><div class="avatar av-baba">B</div><div class="cash-card-name" id="cash-baba-label">Investor cash</div></div>
+          <div class="cash-card-header"><div class="avatar av-baba">B</div><div class="cash-card-name" id="cash-baba-label">Abbu's cash</div></div>
           <input class="cash-amount-input" type="number" id="cash-baba" placeholder="0.00" step="0.01" min="0" inputmode="decimal" oninput="syncCash('baba',this.value)">
           <div class="cash-label">Available to invest</div>
         </div>
@@ -511,45 +487,6 @@ select{padding:11px 12px;font-size:14px;font-family:'Inter',sans-serif;border:1p
     </div>
     <div style="padding:10px 12px;border-top:1px solid var(--border-lt)">
       <button class="add-trigger" onclick="toggleForm('add-form-my')">＋ Add a holding</button>
-    </div>
-  </div>
-</div>
-
-<!-- ═══ PARTNER ═══ -->
-<div id="pg-partner" class="page">
-  <div class="hero" style="margin-bottom:16px">
-    <div class="hero-eyebrow">Wife's portfolio</div>
-    <div class="hero-value" id="p-total">$0.00</div>
-    <div class="hero-sub">Total current value · <span id="p-count">0 positions</span></div>
-    <div class="hero-stats">
-      <div class="hero-stat"><div class="hs-label">Invested</div><div class="hs-val" id="p-invested">$0.00</div></div>
-      <div class="hero-stat"><div class="hs-label">Value</div><div class="hs-val" id="p-value">$0.00</div></div>
-      <div class="hero-stat"><div class="hs-label">P&L</div><div class="hs-val" id="p-pnl">$0.00</div></div>
-      <div class="hero-stat"><div class="hs-label">Return</div><div class="hs-val" id="p-ret">0.00%</div></div>
-    </div>
-  </div>
-  <div class="card">
-    <div class="tbl-wrap"><table>
-      <thead><tr><th>Stock</th><th class="r">Shares</th><th class="r">Cost</th><th class="r">Price</th><th class="r">Value</th><th class="r">P&L</th><th class="r">Ret%</th><th></th></tr></thead>
-      <tbody id="partner-tbody">
-        <tr><td colspan="8"><div class="empty-state">No wife holdings yet</div></td></tr>
-      </tbody>
-    </table></div>
-    <div id="add-form-partner" class="add-form">
-      <div class="form-title">Add wife's holding</div>
-      <div class="form-grid-2">
-        <div class="fg"><label>Ticker</label><input id="pf-ticker" placeholder="AAPL" style="text-transform:uppercase" oninput="this.value=this.value.toUpperCase()"></div>
-        <div class="fg"><label>Stock name</label><input id="pf-name" placeholder="Apple"></div>
-        <div class="fg"><label>Shares</label><input id="pf-shares" type="number" placeholder="5" step="0.0001" inputmode="decimal"></div>
-        <div class="fg"><label>Avg buy price ($)</label><input id="pf-buy" type="number" placeholder="180.00" step="0.01" inputmode="decimal"></div>
-      </div>
-      <div class="form-actions">
-        <button class="btn btn-green" onclick="addPartnerHolding()">Add holding</button>
-        <button class="btn" onclick="closeForm('add-form-partner')">Cancel</button>
-      </div>
-    </div>
-    <div style="padding:10px 12px;border-top:1px solid var(--border-lt)">
-      <button class="add-trigger" onclick="toggleForm('add-form-partner')">＋ Add wife's holding</button>
     </div>
   </div>
 </div>
@@ -654,7 +591,6 @@ select{padding:11px 12px;font-size:14px;font-family:'Inter',sans-serif;border:1p
 <nav class="bottom-nav">
   <button class="bnav-btn active" onclick="showPage('dashboard',this)"><span class="bnav-icon">◈</span>Dashboard</button>
   <button class="bnav-btn" onclick="showPage('holdings',this)"><span class="bnav-icon">≡</span>Holdings</button>
-  <button class="bnav-btn" onclick="showPage('partner',this)"><span class="bnav-icon">♀</span>Partner</button>
   <button class="bnav-btn" onclick="showPage('sell',this)"><span class="bnav-icon">⟳</span>Sell</button>
   <button class="bnav-btn" onclick="showPage('proj',this)"><span class="bnav-icon">↗</span>Project</button>
 </nav>
@@ -1006,10 +942,29 @@ function updateDashboard() {
     meVal += totalVal*(h.mePct/100); meInvested += cost*(h.mePct/100);
     invVal += totalVal*(h.invPct/100); invInvested += cost*(h.invPct/100);
   });
-  let wifeVal=0, wifeInvested=0;
-  wifeHoldings.forEach(h => { wifeVal+=h.shares*(h.live||h.buy); wifeInvested+=h.shares*h.buy; });
   const mePnl=meVal-meInvested, meRet=meInvested>0?(mePnl/meInvested)*100:0;
-  const wifePnl=wifeVal-wifeInvested, invPnl=invVal-invInvested;
+  const invPnl=invVal-invInvested;
+
+  // ABBU VIEW
+  const abbuInvested = invInvested, abbuVal = invVal, abbuPnl = invPnl;
+  const abbuRet = abbuInvested > 0 ? (abbuPnl/abbuInvested)*100 : 0;
+  setVal('d-abbu-total', usd(abbuVal)); setVal('d-abbu-invested', usd(abbuInvested));
+  setVal('d-abbu-value', usd(abbuVal)); setVal('d-abbu-pnl', signed(abbuPnl), colorClass(abbuPnl));
+  setVal('d-abbu-ret', pct(abbuRet), colorClass(abbuPnl));
+  const abbuTb = $('d-abbu-tbody');
+  if (abbuTb) {
+    if (!holdings.filter(h=>h.invPct>0).length) {
+      abbuTb.innerHTML='<tr><td colspan="5"><div class="empty-state">No joint holdings yet</div></td></tr>';
+    } else {
+      abbuTb.innerHTML = holdings.filter(h=>h.invPct>0).map(h => {
+        const price=h.live||h.buyPrice, totalVal=h.totalShares*price;
+        const abbuVal=totalVal*(h.invPct/100), abbuCost=(h.totalShares*h.buyPrice)*(h.invPct/100);
+        const abbuShares=h.totalShares*(h.invPct/100), pnl=abbuVal-abbuCost, ret=abbuCost>0?(pnl/abbuCost)*100:0;
+        const liveCell=h.live?`<span class="live-dot"></span><span class="mono">${usd(h.live)}</span>`:`<span class="mono">${usd(h.buyPrice)}</span>`;
+        return `<tr><td><div class="ticker-sym">${h.ticker}</div><div class="ticker-name">${h.name}</div></td><td class="r mono">${abbuShares.toFixed(4)}</td><td class="r">${liveCell}</td><td class="r mono">${usd(abbuVal)}</td><td class="r"><span class="pill ${pnl>=0?'pill-pos':'pill-neg'}">${pct(ret)}</span></td></tr>`;
+      }).join('');
+    }
+  }
 
   // ME VIEW
   setVal('d-me-total', usd(meVal)); setVal('d-me-invested', usd(meInvested));
@@ -1027,31 +982,21 @@ function updateDashboard() {
     }).join(''); }
   }
 
-  // FAMILY VIEW
-  const famTotal=meVal+wifeVal, famInvested=meInvested+wifeInvested, famPnl=mePnl+wifePnl;
-  const famRet=famInvested>0?(famPnl/famInvested)*100:0;
-  setVal('d-fam-total', usd(famTotal)); setVal('d-fam-me', usd(meVal)); setVal('d-fam-wife', usd(wifeVal));
-  setVal('d-fam-pnl', signed(famPnl), colorClass(famPnl)); setVal('d-fam-ret', pct(famRet), colorClass(famPnl));
-  setVal('d-fam-me-val', usd(meVal)); setVal('d-fam-me-pnl', signed(mePnl), colorClass(mePnl));
-  setVal('d-fam-wife-val', usd(wifeVal)); setVal('d-fam-wife-pnl', signed(wifePnl), colorClass(wifePnl));
-
   // COMBINED VIEW
-  const comTotal=meVal+wifeVal+invVal, comPnl=mePnl+wifePnl+invPnl;
-  setVal('d-com-total', usd(comTotal)); setVal('d-com-me', usd(meVal)); setVal('d-com-wife', usd(wifeVal));
+  const comTotal=meVal+invVal, comInvested=meInvested+invInvested, comPnl=mePnl+invPnl;
+  const comRet=comInvested>0?(comPnl/comInvested)*100:0;
+  setVal('d-com-total', usd(comTotal)); setVal('d-com-me', usd(meVal));
   setVal('d-com-inv', usd(invVal)); setVal('d-com-pnl', signed(comPnl), colorClass(comPnl));
+  setVal('d-com-ret', pct(comRet), colorClass(comPnl));
   setVal('d-com-me-val', usd(meVal)); setVal('d-com-me-pnl', signed(mePnl), colorClass(mePnl));
-  setVal('d-com-wife-val', usd(wifeVal)); setVal('d-com-wife-pnl', signed(wifePnl), colorClass(wifePnl));
   setVal('d-com-inv-val', usd(invVal)); setVal('d-com-inv-pnl', signed(invPnl), colorClass(invPnl));
   const invNames = [...new Set(holdings.filter(h=>h.invPct>0).map(h=>h.invName))];
   if (invNames.length > 0) { const n=invNames[0]; setVal('d-com-inv-name', n); const av=$('d-com-inv-avatar'); if(av) av.textContent=n[0].toUpperCase(); }
-  updateCombined();
+  syncAllCashDisplays();
 }
 
 function updateCombined() {
-  let myTotal=0, partTotal=0;
-  holdings.forEach(h=>myTotal+=h.totalShares*(h.live||h.buyPrice));
-  wifeHoldings.forEach(h=>partTotal+=h.shares*(h.live||h.buy));
-  setVal('p-combined', usd(myTotal+partTotal));
+  // no-op - handled in updateDashboard
 }
 
 /* ── CASH ── */
@@ -1061,13 +1006,15 @@ function syncCash(who, val) {
 }
 function syncAllCashDisplays() {
   const usdFmt = n => '$' + n.toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2});
-  ['cash-me','cash-me-fam','cash-me-com'].forEach(id => { const el=$(id); if(el&&document.activeElement!==el) el.value=cashBalances.me||''; });
-  ['cash-wife','cash-wife-com'].forEach(id => { const el=$(id); if(el&&document.activeElement!==el) el.value=cashBalances.wife||''; });
-  const bc=$('cash-baba'); if(bc&&document.activeElement!==bc) bc.value=cashBalances.baba||'';
-  const ft=$('cash-fam-total'); if(ft) ft.textContent=usdFmt(cashBalances.me+cashBalances.wife);
-  const ct=$('cash-com-total'); if(ct) ct.textContent=usdFmt(cashBalances.me+cashBalances.wife+cashBalances.baba);
-  const bl=$('cash-baba-label');
-  if(bl){ const n=[...new Set(holdings.filter(h=>h.invPct>0).map(h=>h.invName))]; if(n.length) bl.textContent=n[0]+"'s cash"; }
+  ['cash-me','cash-me-com'].forEach(id => { const el=$(id); if(el&&document.activeElement!==el) el.value=cashBalances.me||''; });
+  ['cash-baba','cash-baba-me','cash-abbu-view'].forEach(id => { const el=$(id); if(el&&document.activeElement!==el) el.value=cashBalances.baba||''; });
+  // Update investor name labels dynamically
+  const invNames = [...new Set(holdings.filter(h=>h.invPct>0).map(h=>h.invName))];
+  const invName = invNames.length ? invNames[0] : 'Investor';
+  ['cash-baba-label','cash-inv-label-me'].forEach(id => { const el=$(id); if(el) el.textContent=invName+"'s cash"; });
+  // Totals
+  const mt=$('cash-me-total'); if(mt) mt.textContent=usdFmt(cashBalances.me+cashBalances.baba);
+  const ct=$('cash-com-total'); if(ct) ct.textContent=usdFmt(cashBalances.me+cashBalances.baba);
   scheduleSave();
 }
 
