@@ -646,38 +646,25 @@ select{padding:11px 12px;font-size:14px;font-family:'Inter',sans-serif;border:1p
 </nav>
 
 <script>
-/* ── CORE HELPERS ── */
-const $ = id => document.getElementById(id);
+/* ══════════════════════════════════════════
+   SARWADESK — Complete JS (rebuilt clean)
+══════════════════════════════════════════ */
 
-/* ── CASH BALANCES ── */
+/* ── CORE ── */
+const $ = id => document.getElementById(id);
+let holdings = [], wifeHoldings = [];
 let cashBalances = { me: 0, wife: 0, baba: 0 };
 
-function updateCash() {
-  cashBalances.me = parseFloat($('cash-me')?.value) || 0;
-  syncAllCashDisplays();
-}
-
-function syncCash(who, val) {
-  cashBalances[who] = parseFloat(val) || 0;
-  syncAllCashDisplays();
-}
-
-function syncAllCashDisplays() {
-  const usdFmt = n => '$' + n.toLocaleString('en-US', {minimumFractionDigits:2, maximumFractionDigits:2});
-  // Sync all inputs
-  ['cash-me','cash-me-fam','cash-me-com'].forEach(id => { const el=$(id); if(el && document.activeElement !== el) el.value = cashBalances.me || ''; });
-  ['cash-wife','cash-wife-com'].forEach(id => { const el=$(id); if(el && document.activeElement !== el) el.value = cashBalances.wife || ''; });
-  const bc=$('cash-baba'); if(bc && document.activeElement !== bc) bc.value = cashBalances.baba || '';
-  // Totals
-  const famTotal = $('cash-fam-total');
-  if(famTotal) famTotal.textContent = usdFmt(cashBalances.me + cashBalances.wife);
-  const comTotal = $('cash-com-total');
-  if(comTotal) comTotal.textContent = usdFmt(cashBalances.me + cashBalances.wife + cashBalances.baba);
-  scheduleSave();
-  // Update baba label from holdings investor name
-  const invNames = [...new Set(holdings.filter(h => h.invPct > 0).map(h => h.invName))];
-  const bl = $('cash-baba-label');
-  if(bl && invNames.length > 0) bl.textContent = invNames[0] + "'s cash";
+/* ── FORMATTING ── */
+const usd = n => '$' + Math.abs(n).toLocaleString('en-US', {minimumFractionDigits:2, maximumFractionDigits:2});
+const signed = n => (n >= 0 ? '+' : '−') + usd(n);
+const pct = n => (n >= 0 ? '+' : '') + n.toFixed(2) + '%';
+const sarwaFee = v => Math.max(1, v * 0.0025);
+const colorClass = n => n >= 0 ? 'pos' : 'neg';
+function setVal(id, text, cls) {
+  const el = $(id); if (!el) return;
+  el.textContent = text;
+  if (cls) el.className = el.className.replace(/\bpos\b|\bneg\b/g, '').trim() + ' ' + cls;
 }
 
 /* ── PIN LOCK ── */
@@ -711,7 +698,7 @@ function initPinLock() {
     setInterval(fetchMarket, 5 * 60 * 1000);
   } else {
     $('pin-overlay').classList.remove('hidden');
-    setTimeout(() => $('pin-input').focus(), 100);
+    setTimeout(() => $('pin-input') && $('pin-input').focus(), 200);
   }
 }
 
@@ -723,23 +710,21 @@ let _saveTimer = null;
 
 async function initStorage() {
   try {
-    _binId = localStorage.getItem(JBIN_KEY_NAME) || '';
+    const urlParams = new URLSearchParams(window.location.search);
+    const urlBin = urlParams.get('bin');
+    if (urlBin) { try { localStorage.setItem(JBIN_KEY_NAME, urlBin); } catch(e) {} }
+    _binId = '';
+    try { _binId = localStorage.getItem(JBIN_KEY_NAME) || ''; } catch(e) {}
     if (!_binId) {
-      // Create new bin
       const r = await fetch('https://api.jsonbin.io/v3/b', {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'X-Master-Key': JBIN_MASTER,
-          'X-Bin-Name': 'SarwaDesk-Portfolio',
-          'X-Private': 'false'
-        },
+        headers: { 'Content-Type': 'application/json', 'X-Master-Key': JBIN_MASTER, 'X-Bin-Name': 'SarwaDesk-Portfolio', 'X-Private': 'false' },
         body: JSON.stringify({ holdings: [], wifeHoldings: [], cashBalances: { me:0, wife:0, baba:0 } })
       });
       const d = await r.json();
       _binId = d?.metadata?.id;
       if (_binId) {
-        localStorage.setItem(JBIN_KEY_NAME, _binId);
+        try { localStorage.setItem(JBIN_KEY_NAME, _binId); } catch(e) {}
         showStorageStatus('Portfolio storage created ✓', 'success');
         showShareUrl();
       }
@@ -748,47 +733,29 @@ async function initStorage() {
     }
   } catch(e) {
     console.warn('Storage init error:', e);
-    showStorageStatus('Offline mode — changes save locally only', 'warn');
+    showStorageStatus('Offline — changes local only', 'warn');
   }
 }
 
 async function loadFromCloud() {
   if (!_binId) return;
   try {
-    const r = await fetch(`https://api.jsonbin.io/v3/b/${_binId}/latest`, {
-      headers: { 'X-Master-Key': JBIN_MASTER }
-    });
+    const r = await fetch(`https://api.jsonbin.io/v3/b/${_binId}/latest`, { headers: { 'X-Master-Key': JBIN_MASTER } });
     const d = await r.json();
     const rec = d?.record;
     if (rec) {
       holdings = rec.holdings || [];
       wifeHoldings = rec.wifeHoldings || [];
       cashBalances = rec.cashBalances || { me:0, wife:0, baba:0 };
-      renderHoldings();
-      renderPartner();
-      syncAllCashDisplays();
-      updateDashboard();
+      renderHoldings(); renderPartner(); syncAllCashDisplays(); updateDashboard();
       showStorageStatus('Portfolio loaded ✓', 'success');
     }
-  } catch(e) {
-    console.warn('Load error:', e);
-    showStorageStatus('Could not load — check connection', 'warn');
-  }
+  } catch(e) { console.warn('Load error:', e); showStorageStatus('Could not load', 'warn'); }
 }
 
 function scheduleSave() {
   clearTimeout(_saveTimer);
   _saveTimer = setTimeout(saveToCloud, 1500);
-}
-
-function showShareUrl() {
-  const banner = $('share-banner');
-  const link = $('share-url');
-  if (!banner || !link || !_binId) return;
-  const url = window.location.href.split('?')[0] + '?bin=' + _binId;
-  link.href = url;
-  link.textContent = url;
-  banner.classList.remove('hidden');
 }
 
 async function saveToCloud() {
@@ -797,89 +764,399 @@ async function saveToCloud() {
     showStorageStatus('Saving...', 'saving');
     await fetch(`https://api.jsonbin.io/v3/b/${_binId}`, {
       method: 'PUT',
-      headers: {
-        'Content-Type': 'application/json',
-        'X-Master-Key': JBIN_MASTER
-      },
+      headers: { 'Content-Type': 'application/json', 'X-Master-Key': JBIN_MASTER },
       body: JSON.stringify({ holdings, wifeHoldings, cashBalances })
     });
     showStorageStatus('Saved ✓', 'success');
   } catch(e) {
-    showStorageStatus('Save failed — retrying...', 'warn');
+    showStorageStatus('Save failed', 'warn');
     _saveTimer = setTimeout(saveToCloud, 3000);
   }
 }
 
 function showStorageStatus(msg, type) {
-  const el = $('storage-status');
-  if (!el) return;
+  const el = $('storage-status'); if (!el) return;
   el.textContent = msg;
   el.className = 'storage-status storage-' + type;
-  if (type === 'success') setTimeout(() => { el.textContent = ''; el.className = 'storage-status'; }, 3000);
+  if (type === 'success') setTimeout(() => { if(el) { el.textContent=''; el.className='storage-status'; }}, 3000);
 }
 
-/* ── MARKET DATA (from prices.json) ── */
+function showShareUrl() {
+  const banner = $('share-banner'), link = $('share-url');
+  if (!banner || !link || !_binId) return;
+  const url = window.location.href.split('?')[0] + '?bin=' + _binId;
+  link.href = url; link.textContent = url;
+  banner.classList.remove('hidden');
+}
+
+/* ── PRICES (from prices.json via GitHub Actions) ── */
+let _pricesCache = null, _pricesCacheTime = 0;
+
+async function loadPricesJson() {
+  const now = Date.now();
+  if (_pricesCache && (now - _pricesCacheTime) < 60000) return _pricesCache;
+  try {
+    const r = await fetch('prices.json?t=' + now, { cache: 'no-cache' });
+    if (!r.ok) throw new Error('prices.json not found');
+    const d = await r.json();
+    _pricesCache = d; _pricesCacheTime = now;
+    const el = $('last-updated');
+    if (el && d.updatedAt) {
+      const dt = new Date(d.updatedAt);
+      el.textContent = 'Updated ' + dt.toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'});
+    }
+    return d;
+  } catch(e) { console.warn('prices.json:', e.message); return null; }
+}
+
+async function fetchPrice(ticker) {
+  const data = await loadPricesJson();
+  return data?.prices?.[ticker.toUpperCase()]?.price || null;
+}
+
+/* ── MARKET DATA ── */
 async function fetchMarket() {
   try {
     const data = await loadPricesJson();
     if (!data || !data.market || !data.market.price) {
       $('mkt-status-text').textContent = 'Waiting for price update...';
-      $('mkt-dot').style.background = 'var(--hint)';
       return;
     }
     const m = data.market;
-    const price = m.price;
-    const prev = m.prevClose;
-    const change = m.change;
-    const changePct = m.changePct;
-    const dayLow = m.low;
-    const dayHigh = m.high;
-    const isPos = change >= 0;
+    const isPos = (m.change || 0) >= 0;
     const colorCls = isPos ? 'pos' : 'neg';
     const sign = isPos ? '+' : '';
-    const fmt = n => isNaN(n) || n == null ? '—' : n.toLocaleString('en-US', {minimumFractionDigits:2, maximumFractionDigits:2});
-    $('mkt-price').textContent = fmt(price);
-    $('mkt-pts').textContent = (isPos?'+':'') + fmt(Math.abs(change)) + ' pts';
+    const fmt = n => (n == null || isNaN(n)) ? '—' : Number(n).toLocaleString('en-US', {minimumFractionDigits:2, maximumFractionDigits:2});
+    $('mkt-price').textContent = fmt(m.price);
+    $('mkt-pts').textContent = (isPos?'+':'') + fmt(Math.abs(m.change||0)) + ' pts';
     $('mkt-pts').className = 'mkt-change ' + colorCls;
-    $('mkt-pct').textContent = '(' + sign + Math.abs(changePct).toFixed(2) + '%)';
+    $('mkt-pct').textContent = '(' + sign + Math.abs(m.changePct||0).toFixed(2) + '%)';
     $('mkt-pct').className = 'mkt-change ' + colorCls;
-    $('mkt-range').textContent = fmt(dayLow) + ' – ' + fmt(dayHigh);
+    $('mkt-range').textContent = fmt(m.low) + ' – ' + fmt(m.high);
     $('mkt-dot').style.background = 'var(--green)';
-    // Parse updatedAt to determine market status
-    const updatedAt = data.updatedAt ? new Date(data.updatedAt) : null;
-    const ageMin = updatedAt ? (Date.now() - updatedAt.getTime()) / 60000 : 999;
-    $('mkt-status-text').textContent = ageMin < 10 ? 'Live — updated ' + Math.round(ageMin) + 'm ago' : 'Last update: ' + (updatedAt ? updatedAt.toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'}) : '—');
-    $('mktc-price').textContent = fmt(price);
-    const chgEl = $('mktc-chg');
-    chgEl.textContent = (isPos?'+':'') + fmt(Math.abs(change)) + ' (' + sign + Math.abs(changePct).toFixed(2) + '%)';
-    chgEl.className = 'mkt-ctx-chg ' + colorCls;
-    $('mktc-pts').textContent = (isPos?'+':'−') + fmt(Math.abs(change));
-    $('mktc-pts').className = 'mkt-ctx-stat-val ' + colorCls;
-    $('mktc-pct').textContent = sign + Math.abs(changePct).toFixed(2) + '%';
-    $('mktc-pct').className = 'mkt-ctx-stat-val ' + colorCls;
-    $('mktc-low').textContent = fmt(dayLow);
-    $('mktc-high').textContent = fmt(dayHigh);
-    $('mktc-prev').textContent = fmt(prev);
-    const sent = $('mktc-sentiment');
-    const absPct = Math.abs(changePct);
-    if (absPct < 0.3) {
-      sent.className = 'mkt-sentiment sent-flat';
-      sent.textContent = '➔  Market flat — moves today are likely stock-specific';
-    } else if (isPos) {
-      sent.className = 'mkt-sentiment sent-bull';
-      sent.textContent = '▲  NASDAQ up ' + Math.abs(changePct).toFixed(2) + '% — broad tailwind today';
-    } else {
-      sent.className = 'mkt-sentiment sent-bear';
-      sent.textContent = '▼  NASDAQ down ' + Math.abs(changePct).toFixed(2) + '% — broad headwind today';
+    const ageMin = data.updatedAt ? (Date.now() - new Date(data.updatedAt).getTime()) / 60000 : 999;
+    $('mkt-status-text').textContent = ageMin < 10 ? 'Live · ' + Math.round(ageMin) + 'm ago' : 'Closed';
+    // Context card
+    if ($('mktc-price')) {
+      $('mktc-price').textContent = fmt(m.price);
+      const chgEl = $('mktc-chg');
+      if (chgEl) { chgEl.textContent = (isPos?'+':'') + fmt(Math.abs(m.change||0)) + ' (' + sign + Math.abs(m.changePct||0).toFixed(2) + '%)'; chgEl.className = 'mkt-ctx-chg ' + colorCls; }
+      setVal('mktc-pts', (isPos?'+':'−') + fmt(Math.abs(m.change||0)), colorCls);
+      setVal('mktc-pct', sign + Math.abs(m.changePct||0).toFixed(2) + '%', colorCls);
+      setVal('mktc-low', fmt(m.low)); setVal('mktc-high', fmt(m.high)); setVal('mktc-prev', fmt(m.prevClose));
+      const sent = $('mktc-sentiment');
+      if (sent) {
+        const ap = Math.abs(m.changePct||0);
+        if (ap < 0.3) { sent.className='mkt-sentiment sent-flat'; sent.textContent='➔  Market flat — moves today are likely stock-specific'; }
+        else if (isPos) { sent.className='mkt-sentiment sent-bull'; sent.textContent='▲  NASDAQ up ' + ap.toFixed(2) + '% — broad tailwind today'; }
+        else { sent.className='mkt-sentiment sent-bear'; sent.textContent='▼  NASDAQ down ' + ap.toFixed(2) + '% — broad headwind today'; }
+      }
     }
   } catch(e) {
     $('mkt-status-text').textContent = 'Price data unavailable';
-    $('mkt-dot').style.background = 'var(--hint)';
     console.warn('fetchMarket error:', e);
   }
 }
 
-// fetchMarket called after PIN unlock via initPinLock()
+/* ── NAV ── */
+function showPage(id, btn) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.bnav-btn').forEach(b => b.classList.remove('active'));
+  $('pg-' + id).classList.add('active');
+  btn.classList.add('active');
+  if (id === 'sell') populateSimSel();
+  if (id === 'proj') populateProjSel();
+  if (id === 'dashboard') updateDashboard();
+  window.scrollTo(0, 0);
+}
+
+function setView(v, btn) {
+  document.querySelectorAll('.dash-view').forEach(d => d.style.display = 'none');
+  document.querySelectorAll('.view-btn').forEach(b => b.classList.remove('active'));
+  $('view-' + v).style.display = 'block';
+  btn.classList.add('active');
+  updateDashboard();
+}
+
+function toggleForm(id) { $(id).classList.toggle('open'); }
+function closeForm(id) { $(id).classList.remove('open'); }
+
+/* ── SPLIT RECALC ── */
+function recalcSplit() {
+  const totalShares = parseFloat($('f-shares').value);
+  const meUsd = parseFloat($('f-me-usd').value) || 0;
+  const invUsd = parseFloat($('f-inv-usd').value) || 0;
+  const totalUsd = meUsd + invUsd;
+  if (totalUsd > 0 && !isNaN(totalShares)) {
+    const mePct = (meUsd / totalUsd) * 100, invPct = (invUsd / totalUsd) * 100;
+    const meShares = totalShares * (mePct / 100), invShares = totalShares * (invPct / 100);
+    $('f-me-pct').value = mePct.toFixed(2) + '%';
+    $('f-me-shares').value = meShares.toFixed(4);
+    $('f-inv-pct').value = invUsd > 0 ? invPct.toFixed(2) + '%' : '—';
+    $('f-inv-shares').value = invUsd > 0 ? invShares.toFixed(4) : '—';
+  } else {
+    ['f-me-pct','f-me-shares','f-inv-pct','f-inv-shares'].forEach(id => $(id).value = '');
+  }
+}
+
+/* ── ADD MY HOLDING ── */
+async function addHolding() {
+  const ticker = $('f-ticker').value.trim().toUpperCase();
+  const name = $('f-name').value.trim() || ticker;
+  const totalShares = parseFloat($('f-shares').value);
+  const buyPrice = parseFloat($('f-buy').value);
+  const meUsd = parseFloat($('f-me-usd').value) || 0;
+  const invUsd = parseFloat($('f-inv-usd').value) || 0;
+  const invName = $('f-inv-name').value.trim() || 'Investor';
+  if (!ticker || isNaN(totalShares) || isNaN(buyPrice) || meUsd <= 0) { alert('Please fill ticker, shares, buy price, and your invested amount.'); return; }
+  const totalUsd = meUsd + invUsd;
+  const mePct = totalUsd > 0 ? (meUsd / totalUsd) * 100 : 100;
+  const invPct = 100 - mePct;
+  const live = await fetchPrice(ticker);
+  holdings.push({ ticker, name, totalShares, buyPrice, mePct, invPct, meUsd, invUsd, invName, live });
+  renderHoldings(); closeForm('add-form-my'); scheduleSave();
+  ['f-ticker','f-name','f-shares','f-buy','f-me-usd','f-inv-usd','f-me-pct','f-me-shares','f-inv-pct','f-inv-shares'].forEach(id => $(id).value = '');
+  $('f-inv-name').value = '';
+}
+
+/* ── RENDER MY HOLDINGS ── */
+function renderHoldings() {
+  const tb = $('holdings-tbody');
+  $('h-count').textContent = holdings.length + ' position' + (holdings.length !== 1 ? 's' : '');
+  if (!holdings.length) { tb.innerHTML = '<tr><td colspan="10"><div class="empty-state">No holdings yet — add below</div></td></tr>'; updateDashboard(); return; }
+  tb.innerHTML = holdings.map((h, i) => {
+    const price = h.live || h.buyPrice;
+    const totalVal = h.totalShares * price, cost = h.totalShares * h.buyPrice, pnl = totalVal - cost;
+    const myVal = totalVal * (h.mePct / 100), invVal = totalVal * (h.invPct / 100);
+    const myShares = h.totalShares * (h.mePct / 100), invShares = h.totalShares * (h.invPct / 100);
+    const ret = cost > 0 ? (pnl / cost) * 100 : 0;
+    const liveCell = h.live ? `<span class="live-dot"></span><span class="mono">${usd(h.live)}</span>` : `<span class="mono">${usd(h.buyPrice)}</span><span class="no-feed"> est</span>`;
+    const hasInv = h.invPct > 0;
+    return `<tr>
+      <td><div class="ticker-sym">${h.ticker}</div><div class="ticker-name">${h.name}</div></td>
+      <td class="r mono">${h.totalShares.toFixed(4)}</td>
+      <td class="r mono">${usd(h.buyPrice)}</td>
+      <td class="r">${liveCell}</td>
+      <td class="r mono">${usd(totalVal)}</td>
+      <td><div class="split-col">
+        <div class="split-person"><span class="sp-dot sp-me"></span>Me: ${h.mePct.toFixed(1)}%</div>
+        ${hasInv ? `<div class="split-person"><span class="sp-dot sp-other"></span>${h.invName}: ${h.invPct.toFixed(1)}%</div>` : ''}
+        <div class="split-bar"><div class="split-fill" style="width:${h.mePct}%"></div></div>
+      </div></td>
+      <td class="r mono">${usd(myVal)}</td>
+      <td class="r mono" style="color:var(--muted)">${hasInv ? usd(invVal) : '—'}</td>
+      <td class="r"><span class="pill ${pnl>=0?'pill-pos':'pill-neg'}">${pct(ret)}</span></td>
+      <td><button class="btn-icon" onclick="holdings.splice(${i},1);renderHoldings();scheduleSave()">✕</button></td>
+    </tr>`;
+  }).join('');
+  updateDashboard();
+}
+
+/* ── ADD WIFE HOLDING ── */
+async function addPartnerHolding() {
+  const ticker = $('pf-ticker').value.trim().toUpperCase();
+  const name = $('pf-name').value.trim() || ticker;
+  const shares = parseFloat($('pf-shares').value);
+  const buy = parseFloat($('pf-buy').value);
+  if (!ticker || isNaN(shares) || isNaN(buy)) { alert('Please fill all fields'); return; }
+  const live = await fetchPrice(ticker);
+  wifeHoldings.push({ ticker, name, shares, buy, live });
+  renderPartner(); closeForm('add-form-partner'); scheduleSave();
+  ['pf-ticker','pf-name','pf-shares','pf-buy'].forEach(id => $(id).value = '');
+}
+
+/* ── RENDER WIFE HOLDINGS ── */
+function renderPartner() {
+  const tb = $('partner-tbody');
+  $('p-count').textContent = wifeHoldings.length + ' position' + (wifeHoldings.length !== 1 ? 's' : '');
+  if (!wifeHoldings.length) { tb.innerHTML = '<tr><td colspan="8"><div class="empty-state">No wife holdings yet</div></td></tr>'; updatePartnerHero(); return; }
+  let totInvested = 0, totVal = 0;
+  tb.innerHTML = wifeHoldings.map((h, i) => {
+    const price = h.live || h.buy, val = h.shares * price, cost = h.shares * h.buy, pnl = val - cost, ret = cost > 0 ? (pnl/cost)*100 : 0;
+    totInvested += cost; totVal += val;
+    const liveCell = h.live ? `<span class="live-dot"></span><span class="mono">${usd(h.live)}</span>` : `<span class="mono">${usd(h.buy)}</span>`;
+    return `<tr>
+      <td><div class="ticker-sym">${h.ticker}</div><div class="ticker-name">${h.name}</div></td>
+      <td class="r mono">${h.shares.toFixed(4)}</td>
+      <td class="r mono">${usd(h.buy)}</td>
+      <td class="r">${liveCell}</td>
+      <td class="r mono">${usd(val)}</td>
+      <td class="r"><span class="${colorClass(pnl)} mono">${signed(pnl)}</span></td>
+      <td class="r"><span class="pill ${pnl>=0?'pill-pos':'pill-neg'}">${pct(ret)}</span></td>
+      <td><button class="btn-icon" onclick="wifeHoldings.splice(${i},1);renderPartner();scheduleSave()">✕</button></td>
+    </tr>`;
+  }).join('');
+  updatePartnerHero(totVal, totInvested);
+}
+
+function updatePartnerHero(val, invested) {
+  if (val === undefined) {
+    val = 0; invested = 0;
+    wifeHoldings.forEach(h => { val += h.shares*(h.live||h.buy); invested += h.shares*h.buy; });
+  }
+  const pnl = val - invested, ret = invested > 0 ? (pnl/invested)*100 : 0;
+  setVal('p-total', usd(val)); setVal('p-invested', usd(invested)); setVal('p-value', usd(val));
+  setVal('p-pnl', signed(pnl), colorClass(pnl)); setVal('p-ret', pct(ret), colorClass(pnl));
+  updateCombined();
+}
+
+/* ── DASHBOARD ── */
+function updateDashboard() {
+  let meInvested=0, meVal=0, invVal=0, invInvested=0;
+  holdings.forEach(h => {
+    const price=h.live||h.buyPrice, totalVal=h.totalShares*price, cost=h.totalShares*h.buyPrice;
+    meVal += totalVal*(h.mePct/100); meInvested += cost*(h.mePct/100);
+    invVal += totalVal*(h.invPct/100); invInvested += cost*(h.invPct/100);
+  });
+  let wifeVal=0, wifeInvested=0;
+  wifeHoldings.forEach(h => { wifeVal+=h.shares*(h.live||h.buy); wifeInvested+=h.shares*h.buy; });
+  const mePnl=meVal-meInvested, meRet=meInvested>0?(mePnl/meInvested)*100:0;
+  const wifePnl=wifeVal-wifeInvested, invPnl=invVal-invInvested;
+
+  // ME VIEW
+  setVal('d-me-total', usd(meVal)); setVal('d-me-invested', usd(meInvested));
+  setVal('d-me-value', usd(meVal)); setVal('d-me-pnl', signed(mePnl), colorClass(mePnl));
+  setVal('d-me-ret', pct(meRet), colorClass(mePnl));
+  const meTb = $('d-me-tbody');
+  if (meTb) {
+    if (!holdings.length) { meTb.innerHTML='<tr><td colspan="5"><div class="empty-state">Add holdings to see your portfolio</div></td></tr>'; }
+    else { meTb.innerHTML = holdings.map(h => {
+      const price=h.live||h.buyPrice, totalVal=h.totalShares*price, myVal=totalVal*(h.mePct/100);
+      const myCost=(h.totalShares*h.buyPrice)*(h.mePct/100), myShares=h.totalShares*(h.mePct/100);
+      const pnl=myVal-myCost, ret=myCost>0?(pnl/myCost)*100:0;
+      const liveCell=h.live?`<span class="live-dot"></span><span class="mono">${usd(h.live)}</span>`:`<span class="mono">${usd(h.buyPrice)}</span>`;
+      return `<tr><td><div class="ticker-sym">${h.ticker}</div><div class="ticker-name">${h.name}</div></td><td class="r mono">${myShares.toFixed(4)}</td><td class="r">${liveCell}</td><td class="r mono">${usd(myVal)}</td><td class="r"><span class="pill ${pnl>=0?'pill-pos':'pill-neg'}">${pct(ret)}</span></td></tr>`;
+    }).join(''); }
+  }
+
+  // FAMILY VIEW
+  const famTotal=meVal+wifeVal, famInvested=meInvested+wifeInvested, famPnl=mePnl+wifePnl;
+  const famRet=famInvested>0?(famPnl/famInvested)*100:0;
+  setVal('d-fam-total', usd(famTotal)); setVal('d-fam-me', usd(meVal)); setVal('d-fam-wife', usd(wifeVal));
+  setVal('d-fam-pnl', signed(famPnl), colorClass(famPnl)); setVal('d-fam-ret', pct(famRet), colorClass(famPnl));
+  setVal('d-fam-me-val', usd(meVal)); setVal('d-fam-me-pnl', signed(mePnl), colorClass(mePnl));
+  setVal('d-fam-wife-val', usd(wifeVal)); setVal('d-fam-wife-pnl', signed(wifePnl), colorClass(wifePnl));
+
+  // COMBINED VIEW
+  const comTotal=meVal+wifeVal+invVal, comPnl=mePnl+wifePnl+invPnl;
+  setVal('d-com-total', usd(comTotal)); setVal('d-com-me', usd(meVal)); setVal('d-com-wife', usd(wifeVal));
+  setVal('d-com-inv', usd(invVal)); setVal('d-com-pnl', signed(comPnl), colorClass(comPnl));
+  setVal('d-com-me-val', usd(meVal)); setVal('d-com-me-pnl', signed(mePnl), colorClass(mePnl));
+  setVal('d-com-wife-val', usd(wifeVal)); setVal('d-com-wife-pnl', signed(wifePnl), colorClass(wifePnl));
+  setVal('d-com-inv-val', usd(invVal)); setVal('d-com-inv-pnl', signed(invPnl), colorClass(invPnl));
+  const invNames = [...new Set(holdings.filter(h=>h.invPct>0).map(h=>h.invName))];
+  if (invNames.length > 0) { const n=invNames[0]; setVal('d-com-inv-name', n); const av=$('d-com-inv-avatar'); if(av) av.textContent=n[0].toUpperCase(); }
+  updateCombined();
+}
+
+function updateCombined() {
+  let myTotal=0, partTotal=0;
+  holdings.forEach(h=>myTotal+=h.totalShares*(h.live||h.buyPrice));
+  wifeHoldings.forEach(h=>partTotal+=h.shares*(h.live||h.buy));
+  setVal('p-combined', usd(myTotal+partTotal));
+}
+
+/* ── CASH ── */
+function syncCash(who, val) {
+  cashBalances[who] = parseFloat(val) || 0;
+  syncAllCashDisplays();
+}
+function syncAllCashDisplays() {
+  const usdFmt = n => '$' + n.toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2});
+  ['cash-me','cash-me-fam','cash-me-com'].forEach(id => { const el=$(id); if(el&&document.activeElement!==el) el.value=cashBalances.me||''; });
+  ['cash-wife','cash-wife-com'].forEach(id => { const el=$(id); if(el&&document.activeElement!==el) el.value=cashBalances.wife||''; });
+  const bc=$('cash-baba'); if(bc&&document.activeElement!==bc) bc.value=cashBalances.baba||'';
+  const ft=$('cash-fam-total'); if(ft) ft.textContent=usdFmt(cashBalances.me+cashBalances.wife);
+  const ct=$('cash-com-total'); if(ct) ct.textContent=usdFmt(cashBalances.me+cashBalances.wife+cashBalances.baba);
+  const bl=$('cash-baba-label');
+  if(bl){ const n=[...new Set(holdings.filter(h=>h.invPct>0).map(h=>h.invName))]; if(n.length) bl.textContent=n[0]+"'s cash"; }
+  scheduleSave();
+}
+
+/* ── REFRESH ── */
+async function refreshAll() {
+  _pricesCache = null;
+  for (let h of holdings) { const p=await fetchPrice(h.ticker); if(p) h.live=p; }
+  for (let h of wifeHoldings) { const p=await fetchPrice(h.ticker); if(p) h.live=p; }
+  renderHoldings(); renderPartner(); fetchMarket();
+}
+
+/* ── SELL SIMULATOR ── */
+function populateSimSel() {
+  const s=$('sim-sel'); if(!s) return;
+  s.innerHTML='<option value="">— enter manually —</option>';
+  holdings.forEach((h,i)=>s.innerHTML+=`<option value="${i}">${h.ticker} — ${h.name}</option>`);
+}
+function fillSim() {
+  const i=$('sim-sel').value; if(i==='') return;
+  const h=holdings[parseInt(i)];
+  $('sim-shares').value=h.totalShares; $('sim-price').value=h.live||h.buyPrice;
+  $('sim-buy').value=h.buyPrice; $('sim-split').value=h.mePct.toFixed(2); $('sim-invname').value=h.invName;
+  calcSell();
+}
+function calcSell() {
+  const shares=parseFloat($('sim-shares').value), price=parseFloat($('sim-price').value),
+    buy=parseFloat($('sim-buy').value), split=parseFloat($('sim-split').value),
+    invName=$('sim-invname').value||'Investor';
+  if([shares,price,buy,split].some(isNaN)){$('sell-content').style.display='none';$('sell-empty').style.display='block';return;}
+  const gross=shares*price, cost=shares*buy, fee=sarwaFee(gross), net=gross-fee;
+  const myNet=net*(split/100), invNet=net*((100-split)/100);
+  const myCost=cost*(split/100), invCost=cost*((100-split)/100);
+  const mp=myNet-myCost, op=invNet-invCost;
+  setVal('r-gross', usd(gross)); setVal('r-cost', usd(cost)); setVal('r-fee', '−'+usd(fee));
+  setVal('r-net', usd(net)); setVal('r-mynet', usd(myNet));
+  const rl=$('r-invlabel'); if(rl) rl.textContent=invName+' (net)';
+  setVal('r-invnet', usd(invNet));
+  setVal('r-mypnl', signed(mp), colorClass(mp));
+  const rpl=$('r-invpnllabel'); if(rpl) rpl.textContent=invName+' P&L';
+  setVal('r-invpnl', signed(op), colorClass(op));
+  $('sell-empty').style.display='none'; $('sell-content').style.display='block';
+}
+
+/* ── PROJECTIONS ── */
+function populateProjSel() {
+  const s=$('proj-sel'); if(!s) return;
+  s.innerHTML='<option value="">— enter manually —</option>';
+  holdings.forEach((h,i)=>s.innerHTML+=`<option value="${i}">${h.ticker} — ${h.name}</option>`);
+}
+function fillProj() {
+  const i=$('proj-sel').value; if(i==='') return;
+  const h=holdings[parseInt(i)];
+  $('pj-shares').value=h.totalShares; $('pj-split').value=h.mePct.toFixed(2);
+  $('pj-buy').value=h.buyPrice; $('pj-cur').value=h.live||h.buyPrice; $('pj-invname').value=h.invName;
+  calcProj();
+}
+function calcProj() {
+  const shares=parseFloat($('pj-shares').value), split=parseFloat($('pj-split').value),
+    buy=parseFloat($('pj-buy').value), cur=parseFloat($('pj-cur').value),
+    tar=parseFloat($('pj-tar').value), invName=$('pj-invname').value||'Investor';
+  if([shares,split,buy,cur].some(isNaN)){
+    $('pj-cur-content').style.display='none'; $('pj-cur-empty').style.display='block';
+    $('pj-tar-content').style.display='none'; $('pj-tar-empty').style.display='block'; return;
+  }
+  const mp=split/100, ip=(100-split)/100;
+  const curVal=shares*cur, myC=curVal*mp, otherC=curVal*ip, myCurPnl=myC-(shares*buy*mp);
+  setVal('pjc-total', usd(curVal)); setVal('pjc-me', usd(myC));
+  const pil=$('pjc-inv-label'); if(pil) pil.textContent=invName;
+  setVal('pjc-inv', usd(otherC)); setVal('pjc-mypnl', signed(myCurPnl), colorClass(myCurPnl));
+  $('pj-cur-empty').style.display='none'; $('pj-cur-content').style.display='block';
+  if (!isNaN(tar)) {
+    const tarVal=shares*tar, myT=tarVal*mp, otherT=tarVal*ip, gain=myT-myC, move=((tar-cur)/cur)*100;
+    setVal('pjt-total', usd(tarVal)); setVal('pjt-me', usd(myT));
+    const til=$('pjt-inv-label'); if(til) til.textContent=invName;
+    setVal('pjt-inv', usd(otherT)); setVal('pjt-gain', signed(gain), colorClass(gain));
+    setVal('pjt-move', pct(move), colorClass(move));
+    $('pj-tar-empty').style.display='none'; $('pj-tar-content').style.display='block';
+  }
+}
+
+/* ── INIT ── */
+// Hardcoded API key (used as fallback)
+let _apiKey = 'QA8GOOZMI9C99EMT';
+function getApiKey() { return _apiKey; }
+function checkApiKey() { const el=$('api-key-bar'); if(el) el.classList.add('hidden'); }
+checkApiKey();
+initPinLock();
 </script>
 </body>
 </html>
