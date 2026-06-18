@@ -5,7 +5,7 @@ const JSONBIN_KEY = process.env.JSONBIN_KEY;
 const JSONBIN_BIN_ID = process.env.JSONBIN_BIN_ID;
 
 // Separate bin for prices only
-const PRICES_BIN_ID = process.env.PRICES_BIN_ID;
+const PRICES_BIN_ID = '6a33bfd4da38895dfed6349f'; // hardcoded
 
 function fetchJson(url, options = {}, body = null) {
   return new Promise((resolve, reject) => {
