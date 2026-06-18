@@ -335,7 +335,7 @@ select{padding:11px 12px;font-size:14px;font-family:'Inter',sans-serif;border:1p
     <div class="hero">
       <div class="hero-eyebrow">Family — You & Wife</div>
       <div class="hero-value" id="d-fam-total">$0.00</div>
-      <div class="hero-sub">Combined investments (excluding cash)</div>
+      <div class="hero-sub">Combined investments (excluding cash) · Total: <span id="p-combined">$0.00</span></div>
       <div class="hero-stats">
         <div class="hero-stat"><div class="hs-label">Your value</div><div class="hs-val" id="d-fam-me">$0.00</div></div>
         <div class="hero-stat"><div class="hs-label">Wife's value</div><div class="hs-val" id="d-fam-wife">$0.00</div></div>
@@ -506,7 +506,7 @@ select{padding:11px 12px;font-size:14px;font-family:'Inter',sans-serif;border:1p
   <div class="hero" style="margin-bottom:16px">
     <div class="hero-eyebrow">Wife's portfolio</div>
     <div class="hero-value" id="p-total">$0.00</div>
-    <div class="hero-sub">Total current value</div>
+    <div class="hero-sub">Total current value · <span id="p-count">0 positions</span></div>
     <div class="hero-stats">
       <div class="hero-stat"><div class="hs-label">Invested</div><div class="hs-val" id="p-invested">$0.00</div></div>
       <div class="hero-stat"><div class="hs-label">Value</div><div class="hs-val" id="p-value">$0.00</div></div>
@@ -709,32 +709,10 @@ let _binId = '';
 let _saveTimer = null;
 
 async function initStorage() {
-  try {
-    const urlParams = new URLSearchParams(window.location.search);
-    const urlBin = urlParams.get('bin');
-    if (urlBin) { try { localStorage.setItem(JBIN_KEY_NAME, urlBin); } catch(e) {} }
-    _binId = '';
-    try { _binId = localStorage.getItem(JBIN_KEY_NAME) || ''; } catch(e) {}
-    if (!_binId) {
-      const r = await fetch('https://api.jsonbin.io/v3/b', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json', 'X-Master-Key': JBIN_MASTER, 'X-Bin-Name': 'SarwaDesk-Portfolio', 'X-Private': 'false' },
-        body: JSON.stringify({ holdings: [], wifeHoldings: [], cashBalances: { me:0, wife:0, baba:0 } })
-      });
-      const d = await r.json();
-      _binId = d?.metadata?.id;
-      if (_binId) {
-        try { localStorage.setItem(JBIN_KEY_NAME, _binId); } catch(e) {}
-        showStorageStatus('Portfolio storage created ✓', 'success');
-        showShareUrl();
-      }
-    } else {
-      await loadFromCloud();
-    }
-  } catch(e) {
-    console.warn('Storage init error:', e);
-    showStorageStatus('Offline — changes local only', 'warn');
-  }
+  // Bin ID hardcoded — no dynamic creation needed
+  _binId = '6a33ab84da38895dfed5c604';
+  try { localStorage.setItem(JBIN_KEY_NAME, _binId); } catch(e) {}
+  await loadFromCloud();
 }
 
 async function loadFromCloud() {
