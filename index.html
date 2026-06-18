@@ -724,7 +724,7 @@ let _saveTimer = null;
 
 async function initStorage() {
   // Bin ID hardcoded — no dynamic creation needed
-  _binId = '6a33ab84da38895dfed5c604';
+  _binId = '6a33bb68f5f4af5e29079fb0';
   try { localStorage.setItem(JBIN_KEY_NAME, _binId); } catch(e) {}
   await loadFromCloud();
 }
@@ -788,17 +788,20 @@ async function loadPricesJson() {
   const now = Date.now();
   if (_pricesCache && (now - _pricesCacheTime) < 60000) return _pricesCache;
   try {
-    const r = await fetch('prices.json?t=' + now, { cache: 'no-cache' });
-    if (!r.ok) throw new Error('prices.json not found');
+    const r = await fetch('https://api.jsonbin.io/v3/b/6a33bfd4da38895dfed6349f/latest', {
+      headers: { 'X-Master-Key': '$2a$10$74I7jJfeWcf8SoJm6jOQtedJwnaONH.yLfZzjo75/hxAOI4zYKJZK' }
+    });
+    if (!r.ok) throw new Error('Prices bin error: ' + r.status);
     const d = await r.json();
-    _pricesCache = d; _pricesCacheTime = now;
+    const data = d?.record || d;
+    _pricesCache = data; _pricesCacheTime = now;
     const el = $('last-updated');
-    if (el && d.updatedAt) {
-      const dt = new Date(d.updatedAt);
+    if (el && data.updatedAt) {
+      const dt = new Date(data.updatedAt);
       el.textContent = 'Updated ' + dt.toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'});
     }
-    return d;
-  } catch(e) { console.warn('prices.json:', e.message); return null; }
+    return data;
+  } catch(e) { console.warn('loadPricesJson error:', e.message); return null; }
 }
 
 async function fetchPrice(ticker) {
