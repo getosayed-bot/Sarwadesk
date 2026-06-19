@@ -1,18 +1,14 @@
-# SarwaDesk price updater — activated 18 Jun 2026
+# SarwaDesk price updater — activated 18 Jun 2026 (with metals support)
 name: Update Stock Prices
-
 on:
   schedule:
     - cron: '*/5 13-20 * * 1-5'
   workflow_dispatch:
-
 permissions:
   contents: write
-
 concurrency:
   group: prices
   cancel-in-progress: false
-
 jobs:
   update-prices:
     runs-on: ubuntu-latest
@@ -22,15 +18,14 @@ jobs:
         with:
           fetch-depth: 0
           token: ${{ secrets.GITHUB_TOKEN }}
-
       - name: Fetch prices and update
         env:
           TIINGO_KEY: ${{ secrets.TIINGO_KEY }}
           JSONBIN_KEY: ${{ secrets.JSONBIN_KEY }}
           JSONBIN_BIN_ID: ${{ secrets.JSONBIN_BIN_ID }}
+          METALS_KEY: ${{ secrets.METALS_KEY }}
         run: |
           node .github/scripts/update-prices.js
-
       - name: Commit updated prices
         run: |
           git config user.name "SarwaDesk Bot"
