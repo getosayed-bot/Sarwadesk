@@ -337,32 +337,77 @@ select{padding:11px 12px;font-size:14px;font-family:'Inter',sans-serif;border:1p
 
   <!-- ME VIEW -->
   <div id="view-me" class="dash-view" style="display:none">
-    <div class="hero">
-      <div class="hero-eyebrow">My portfolio</div>
-      <div class="hero-value" id="d-me-total">$0.00</div>
-      <div class="hero-aed" id="d-me-total-aed">AED 0</div>
-      <div class="hero-sub">Your share across all holdings</div>
-      <div class="hero-stats">
-        <div class="hero-stat"><div class="hs-label">Invested</div><div class="hs-val" id="d-me-invested">$0.00</div></div>
-        <div class="hero-stat"><div class="hs-label">Current value</div><div class="hs-val" id="d-me-value">$0.00</div></div>
-        <div class="hero-stat"><div class="hs-label">P&L</div><div class="hs-val" id="d-me-pnl">$0.00</div></div>
-        <div class="hero-stat"><div class="hs-label">Return</div><div class="hs-val" id="d-me-ret">0.00%</div></div>
+    <!-- MOBILE HERO -->
+    <div class="hero-mobile mobile-only">
+      <div class="hero-mobile-label">My portfolio</div>
+      <div class="hero-mobile-value" id="d-me-total-m">$0.00</div>
+      <div class="hero-aed" id="d-me-total-m-aed">AED 0</div>
+      <div class="hero-mobile-stats">
+        <div class="hms"><div class="hms-label">Invested</div><div class="hms-val" id="d-me-invested-m">$0.00</div></div>
+        <div class="hms"><div class="hms-label">Current value</div><div class="hms-val" id="d-me-value-m">$0.00</div></div>
+        <div class="hms"><div class="hms-label">P&L</div><div class="hms-val" id="d-me-pnl-m">$0.00</div></div>
+        <div class="hms"><div class="hms-label">Return</div><div class="hms-val" id="d-me-ret-m">0.00%</div></div>
       </div>
     </div>
-
-    <div class="card">
-      <div class="tbl-wrap"><table>
-        <thead><tr><th>Stock</th><th class="r">My shares</th><th class="r">Price</th><th class="r">My value</th><th class="r">P&L</th></tr></thead>
-        <tbody id="d-me-tbody"><tr><td colspan="5"><div class="empty-state">Add holdings to see your portfolio</div></td></tr></tbody>
-      </table></div>
+    <!-- MOBILE BODY -->
+    <div class="mobile-only">
+      <div class="section-label">My holdings</div>
+      <div class="stock-cards" id="d-me-cards"><div style="text-align:center;padding:24px;color:var(--muted);font-size:13px">Add holdings to see your portfolio</div></div>
+      <div class="section-label">💵 My cash</div>
+      <div class="cash-row">
+        <div class="cash-mini" style="flex:1">
+          <div class="cash-mini-label"><div class="avatar av-me" style="width:18px;height:18px;font-size:8px">OS</div>My cash</div>
+          <input class="cash-mini-input" type="number" id="cash-me-mob" placeholder="0.00" step="0.01" inputmode="decimal" oninput="syncCash('me',this.value)">
+        </div>
+      </div>
+      <div class="section-label">🪙 My precious metals</div>
+      <div class="metals-row">
+        <div class="cash-mini">
+          <div class="cash-mini-label">🥇 Gold (grams)</div>
+          <input class="cash-mini-input" type="number" id="gold-me-mob" placeholder="0" step="0.01" inputmode="decimal" oninput="syncMetal('me','gold_g',this.value)">
+          <div id="gold-me-mob-val" style="font-size:11px;color:var(--muted);margin-top:4px">—</div>
+        </div>
+        <div class="cash-mini">
+          <div class="cash-mini-label">🥈 Silver (grams)</div>
+          <input class="cash-mini-input" type="number" id="silver-me-mob" placeholder="0" step="0.01" inputmode="decimal" oninput="syncMetal('me','silver_g',this.value)">
+          <div id="silver-me-mob-val" style="font-size:11px;color:var(--muted);margin-top:4px">—</div>
+        </div>
+      </div>
+      <div class="grand-total-card">
+        <div class="gt-label">MY GRAND TOTAL</div>
+        <div class="gt-value" id="gt-me-usd">$0.00</div>
+        <div class="gt-aed" id="gt-me-aed">AED 0</div>
+        <div class="gt-breakdown" id="gt-me-break">Holdings + Cash + Metals</div>
+      </div>
     </div>
-    <div class="cash-section">
-      <div class="cash-section-title">💵 Cash on hand</div>
-      <div class="cash-grid">
-        <div class="cash-card">
-          <div class="cash-card-header"><div class="avatar av-me">OS</div><div class="cash-card-name">My cash</div></div>
-          <input class="cash-amount-input" type="number" id="cash-me" placeholder="0.00" step="0.01" min="0" inputmode="decimal" oninput="syncCash('me',this.value)">
-          <div class="cash-label">Available to invest</div>
+    <!-- DESKTOP -->
+    <div class="desktop-only">
+      <div class="hero">
+        <div class="hero-eyebrow">My portfolio</div>
+        <div class="hero-value" id="d-me-total">$0.00</div>
+        <div class="hero-aed" id="d-me-total-aed">AED 0</div>
+        <div class="hero-sub">Your share across all holdings</div>
+        <div class="hero-stats">
+          <div class="hero-stat"><div class="hs-label">Invested</div><div class="hs-val" id="d-me-invested">$0.00</div></div>
+          <div class="hero-stat"><div class="hs-label">Current value</div><div class="hs-val" id="d-me-value">$0.00</div></div>
+          <div class="hero-stat"><div class="hs-label">P&L</div><div class="hs-val" id="d-me-pnl">$0.00</div></div>
+          <div class="hero-stat"><div class="hs-label">Return</div><div class="hs-val" id="d-me-ret">0.00%</div></div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="tbl-wrap"><table>
+          <thead><tr><th>Stock</th><th class="r">My shares</th><th class="r">Price</th><th class="r">My value</th><th class="r">P&L</th></tr></thead>
+          <tbody id="d-me-tbody"><tr><td colspan="5"><div class="empty-state">Add holdings to see your portfolio</div></td></tr></tbody>
+        </table></div>
+      </div>
+      <div class="cash-section">
+        <div class="cash-section-title">💵 My cash</div>
+        <div class="cash-grid">
+          <div class="cash-card">
+            <div class="cash-card-header"><div class="avatar av-me">OS</div><div class="cash-card-name">My cash</div></div>
+            <input class="cash-amount-input" type="number" id="cash-me" placeholder="0.00" step="0.01" min="0" inputmode="decimal" oninput="syncCash('me',this.value)">
+            <div class="cash-label">Available to invest</div>
+          </div>
         </div>
       </div>
     </div>
