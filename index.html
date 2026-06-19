@@ -410,6 +410,27 @@ select{padding:11px 12px;font-size:14px;font-family:'Inter',sans-serif;border:1p
           </div>
         </div>
       </div>
+      <div class="cash-section">
+        <div class="cash-section-title">🪙 My precious metals</div>
+        <div class="cash-grid">
+          <div class="cash-card">
+            <div class="cash-card-header"><div class="avatar av-baba" style="background:#fef3c7;color:#d97706">Au</div><div class="cash-card-name">Gold (grams)</div></div>
+            <input class="cash-amount-input" type="number" id="gold-me-desk" placeholder="0" step="0.01" min="0" inputmode="decimal" oninput="syncMetal('me','gold_g',this.value)">
+            <div class="cash-label" id="gold-me-desk-val">—</div>
+          </div>
+          <div class="cash-card">
+            <div class="cash-card-header"><div class="avatar" style="background:#e5e7eb;color:#6b7280">Ag</div><div class="cash-card-name">Silver (grams)</div></div>
+            <input class="cash-amount-input" type="number" id="silver-me-desk" placeholder="0" step="0.01" min="0" inputmode="decimal" oninput="syncMetal('me','silver_g',this.value)">
+            <div class="cash-label" id="silver-me-desk-val">—</div>
+          </div>
+        </div>
+      </div>
+      <div class="grand-total-card">
+        <div class="gt-label">MY GRAND TOTAL</div>
+        <div class="gt-value" id="gt-me-usd-desk">$0.00</div>
+        <div class="gt-aed" id="gt-me-aed-desk">AED 0</div>
+        <div class="gt-breakdown" id="gt-me-break-desk">Holdings + Cash + Metals</div>
+      </div>
     </div>
   </div>
 
@@ -479,7 +500,7 @@ select{padding:11px 12px;font-size:14px;font-family:'Inter',sans-serif;border:1p
         </table></div>
       </div>
       <div class="cash-section">
-        <div class="cash-section-title">💵 Abbu's cash on hand</div>
+        <div class="cash-section-title">💵 Abbu's cash</div>
         <div class="cash-grid">
           <div class="cash-card">
             <div class="cash-card-header"><div class="avatar av-baba">AB</div><div class="cash-card-name">Abbu's cash</div></div>
@@ -487,6 +508,27 @@ select{padding:11px 12px;font-size:14px;font-family:'Inter',sans-serif;border:1p
             <div class="cash-label">Available to invest</div>
           </div>
         </div>
+      </div>
+      <div class="cash-section">
+        <div class="cash-section-title">🪙 Abbu's precious metals</div>
+        <div class="cash-grid">
+          <div class="cash-card">
+            <div class="cash-card-header"><div class="avatar" style="background:#fef3c7;color:#d97706">Au</div><div class="cash-card-name">Gold (grams)</div></div>
+            <input class="cash-amount-input" type="number" id="gold-abbu-desk" placeholder="0" step="0.01" min="0" inputmode="decimal" oninput="syncMetal('baba','gold_g',this.value)">
+            <div class="cash-label" id="gold-abbu-desk-val">—</div>
+          </div>
+          <div class="cash-card">
+            <div class="cash-card-header"><div class="avatar" style="background:#e5e7eb;color:#6b7280">Ag</div><div class="cash-card-name">Silver (grams)</div></div>
+            <input class="cash-amount-input" type="number" id="silver-abbu-desk" placeholder="0" step="0.01" min="0" inputmode="decimal" oninput="syncMetal('baba','silver_g',this.value)">
+            <div class="cash-label" id="silver-abbu-desk-val">—</div>
+          </div>
+        </div>
+      </div>
+      <div class="grand-total-card">
+        <div class="gt-label">ABBU'S GRAND TOTAL</div>
+        <div class="gt-value" id="gt-abbu-usd-desk">$0.00</div>
+        <div class="gt-aed" id="gt-abbu-aed-desk">AED 0</div>
+        <div class="gt-breakdown" id="gt-abbu-break-desk">Holdings + Cash + Metals</div>
       </div>
     </div>
   </div>
@@ -581,6 +623,20 @@ select{padding:11px 12px;font-size:14px;font-family:'Inter',sans-serif;border:1p
         <span class="cash-total-label">Total combined cash</span>
         <span class="cash-total-val" id="cash-com-total">$0.00</span>
       </div>
+    </div>
+    <div class="cash-section desktop-only">
+      <div class="cash-section-title">🪙 Precious metals (combined)</div>
+      <div style="background:var(--white);border:1px solid var(--border);border-radius:var(--r);padding:16px 18px">
+        <div class="metal-line"><span class="ml-label">🥇 Gold total:</span><span class="ml-val" id="gold-com-total-desk">—</span></div>
+        <div class="metal-line"><span class="ml-label">🥈 Silver total:</span><span class="ml-val" id="silver-com-total-desk">—</span></div>
+        <div class="metals-note" id="metals-com-note-desk" style="text-align:left;margin-top:10px">Enter amounts in My portfolio and Abbu\'s portfolio views</div>
+      </div>
+    </div>
+    <div class="grand-total-card grand-total-combined desktop-only">
+      <div class="gt-label">GRAND TOTAL — Combined</div>
+      <div class="gt-value" id="gt-com-usd-desk">$0.00</div>
+      <div class="gt-aed" id="gt-com-aed-desk">AED 0</div>
+      <div class="gt-breakdown" id="gt-com-break-desk">Holdings + Cash + Metals (You + Abbu)</div>
     </div>
   </div>
 </div>
@@ -906,12 +962,12 @@ function renderMetals() {
   const abbuGold = metals.baba?.gold_g || 0;
   const abbuSilver = metals.baba?.silver_g || 0;
 
-  // Update input fields (without disrupting active typing)
+  // Update input fields (mobile + desktop) without disrupting active typing
   const setIfNot = (id, val) => { const el=$(id); if(el && document.activeElement!==el) el.value = val || ''; };
-  setIfNot('gold-me-mob', meGold);
-  setIfNot('silver-me-mob', meSilver);
-  setIfNot('gold-abbu-mob', abbuGold);
-  setIfNot('silver-abbu-mob', abbuSilver);
+  setIfNot('gold-me-mob', meGold); setIfNot('gold-me-desk', meGold);
+  setIfNot('silver-me-mob', meSilver); setIfNot('silver-me-desk', meSilver);
+  setIfNot('gold-abbu-mob', abbuGold); setIfNot('gold-abbu-desk', abbuGold);
+  setIfNot('silver-abbu-mob', abbuSilver); setIfNot('silver-abbu-desk', abbuSilver);
 
   // USD value labels under each input
   const meGoldUsd = gramsToUsd(meGold, prices.gold);
@@ -929,16 +985,20 @@ function renderMetals() {
   setMetalLabel('silver-me-mob-val', meSilver, meSilverUsd, prices.silver > 0);
   setMetalLabel('gold-abbu-mob-val', abbuGold, abbuGoldUsd, prices.gold > 0);
   setMetalLabel('silver-abbu-mob-val', abbuSilver, abbuSilverUsd, prices.silver > 0);
+  setMetalLabel('gold-me-desk-val', meGold, meGoldUsd, prices.gold > 0);
+  setMetalLabel('silver-me-desk-val', meSilver, meSilverUsd, prices.silver > 0);
+  setMetalLabel('gold-abbu-desk-val', abbuGold, abbuGoldUsd, prices.gold > 0);
+  setMetalLabel('silver-abbu-desk-val', abbuSilver, abbuSilverUsd, prices.silver > 0);
 
   // Combined view totals
   const totalGoldG = meGold + abbuGold;
   const totalSilverG = meSilver + abbuSilver;
   const totalGoldUsd = gramsToUsd(totalGoldG, prices.gold);
   const totalSilverUsd = gramsToUsd(totalSilverG, prices.silver);
-  const gct = $('gold-com-total');
-  const sct = $('silver-com-total');
-  if (gct) gct.textContent = totalGoldG > 0 ? totalGoldG.toFixed(2) + 'g · ' + usd(totalGoldUsd) + ' · ' + aed(totalGoldUsd) : '—';
-  if (sct) sct.textContent = totalSilverG > 0 ? totalSilverG.toFixed(2) + 'g · ' + usd(totalSilverUsd) + ' · ' + aed(totalSilverUsd) : '—';
+  const goldText = totalGoldG > 0 ? totalGoldG.toFixed(2) + 'g · ' + usd(totalGoldUsd) + ' · ' + aed(totalGoldUsd) : '—';
+  const silverText = totalSilverG > 0 ? totalSilverG.toFixed(2) + 'g · ' + usd(totalSilverUsd) + ' · ' + aed(totalSilverUsd) : '—';
+  ['gold-com-total','gold-com-total-desk'].forEach(id => { const el=$(id); if(el) el.textContent=goldText; });
+  ['silver-com-total','silver-com-total-desk'].forEach(id => { const el=$(id); if(el) el.textContent=silverText; });
   const note = $('metals-com-note');
   if (note) {
     if (!prices.gold && !prices.silver) note.textContent = 'Metals prices loading from agent...';
@@ -980,17 +1040,17 @@ function updateGrandTotals() {
 
   const comTotal = meTotal + abbuTotal;
 
-  setVal('gt-me-usd', usd(meTotal));
-  const gma = $('gt-me-aed'); if (gma) gma.textContent = aed(meTotal);
-  setVal('gt-abbu-usd', usd(abbuTotal));
-  const gaa = $('gt-abbu-aed'); if (gaa) gaa.textContent = aed(abbuTotal);
-  setVal('gt-com-usd', usd(comTotal));
-  const gca = $('gt-com-aed'); if (gca) gca.textContent = aed(comTotal);
+  // Mobile + Desktop grand totals
+  ['gt-me-usd','gt-me-usd-desk'].forEach(id => setVal(id, usd(meTotal)));
+  ['gt-me-aed','gt-me-aed-desk'].forEach(id => { const el=$(id); if(el) el.textContent = aed(meTotal); });
+  ['gt-abbu-usd','gt-abbu-usd-desk'].forEach(id => setVal(id, usd(abbuTotal)));
+  ['gt-abbu-aed','gt-abbu-aed-desk'].forEach(id => { const el=$(id); if(el) el.textContent = aed(abbuTotal); });
+  ['gt-com-usd','gt-com-usd-desk'].forEach(id => setVal(id, usd(comTotal)));
+  ['gt-com-aed','gt-com-aed-desk'].forEach(id => { const el=$(id); if(el) el.textContent = aed(comTotal); });
 
-  // Breakdown text
   const fmtBreak = (hold, cash, metalsVal) => 'Holdings ' + usd(hold) + ' + Cash ' + usd(cash) + ' + Metals ' + usd(metalsVal);
-  const gmb = $('gt-me-break'); if (gmb) gmb.textContent = fmtBreak(meHoldings, meCash, meGoldUsd + meSilverUsd);
-  const gab = $('gt-abbu-break'); if (gab) gab.textContent = fmtBreak(abbuHoldings, abbuCash, abbuGoldUsd + abbuSilverUsd);
+  ['gt-me-break','gt-me-break-desk'].forEach(id => { const el=$(id); if(el) el.textContent = fmtBreak(meHoldings, meCash, meGoldUsd + meSilverUsd); });
+  ['gt-abbu-break','gt-abbu-break-desk'].forEach(id => { const el=$(id); if(el) el.textContent = fmtBreak(abbuHoldings, abbuCash, abbuGoldUsd + abbuSilverUsd); });
 
   // Update hero AED indicators using portfolio-only (not grand total)
   const setAed = (id, val) => { const el=$(id); if(el) el.textContent = aed(val); };
