@@ -227,7 +227,8 @@ td{padding:12px 12px;font-size:12px;color:var(--text);vertical-align:middle}
 /* Mobile hero — compact */
 .hero-mobile{background:var(--white);border-bottom:1px solid var(--border);padding:20px 16px 16px}
 .hero-mobile-label{font-size:11px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.06em;margin-bottom:4px}
-.hero-mobile-value{font-size:32px;font-weight:700;letter-spacing:-.02em;font-variant-numeric:tabular-nums;margin-bottom:12px}
+.hero-mobile-value{font-size:32px;font-weight:700;letter-spacing:-.02em;font-variant-numeric:tabular-nums;margin-bottom:2px}
+.hero-aed{font-size:13px;color:var(--muted);font-weight:500;margin-bottom:14px;font-variant-numeric:tabular-nums}
 .hero-mobile-stats{display:grid;grid-template-columns:1fr 1fr;gap:8px}
 .hms{background:var(--bg);border-radius:var(--rs);padding:10px 12px}
 .hms-label{font-size:10px;color:var(--muted);margin-bottom:2px;text-transform:uppercase;letter-spacing:.04em}
@@ -251,6 +252,21 @@ td{padding:12px 12px;font-size:12px;color:var(--text);vertical-align:middle}
 
 /* Section label */
 .section-label{font-size:11px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.06em;padding:16px 16px 8px}
+
+/* Metals & grand total */
+.metals-row{display:flex;gap:10px;padding:0 16px 16px}
+.metals-summary{margin:0 16px 16px;background:var(--white);border:1px solid var(--border);border-radius:var(--r);padding:14px 16px}
+.metal-line{display:flex;justify-content:space-between;align-items:center;padding:6px 0;font-size:13px}
+.ml-label{color:var(--muted);font-weight:500}
+.ml-val{font-weight:600;font-variant-numeric:tabular-nums}
+.metals-note{font-size:11px;color:var(--hint);margin-top:8px;padding-top:8px;border-top:1px solid var(--border-lt);text-align:center}
+
+.grand-total-card{margin:16px;background:linear-gradient(135deg,#0a0a0a 0%,#1f2937 100%);color:#fff;border-radius:var(--r);padding:20px 18px;text-align:center}
+.grand-total-combined{background:linear-gradient(135deg,#059669 0%,#047857 100%)}
+.gt-label{font-size:10px;font-weight:600;color:rgba(255,255,255,.6);text-transform:uppercase;letter-spacing:.08em;margin-bottom:6px}
+.gt-value{font-size:30px;font-weight:700;letter-spacing:-.02em;font-variant-numeric:tabular-nums;margin-bottom:2px}
+.gt-aed{font-size:14px;font-weight:500;color:rgba(255,255,255,.75);font-variant-numeric:tabular-nums;margin-bottom:8px}
+.gt-breakdown{font-size:11px;color:rgba(255,255,255,.5);font-weight:500}
 
 /* Show/hide based on input device (most reliable mobile detection) */
 /* Default: mobile layout */
@@ -324,6 +340,7 @@ select{padding:11px 12px;font-size:14px;font-family:'Inter',sans-serif;border:1p
     <div class="hero">
       <div class="hero-eyebrow">My portfolio</div>
       <div class="hero-value" id="d-me-total">$0.00</div>
+      <div class="hero-aed" id="d-me-total-aed">AED 0</div>
       <div class="hero-sub">Your share across all holdings</div>
       <div class="hero-stats">
         <div class="hero-stat"><div class="hs-label">Invested</div><div class="hs-val" id="d-me-invested">$0.00</div></div>
@@ -358,6 +375,7 @@ select{padding:11px 12px;font-size:14px;font-family:'Inter',sans-serif;border:1p
     <div class="hero-mobile mobile-only">
       <div class="hero-mobile-label">Abbu's portfolio</div>
       <div class="hero-mobile-value" id="d-abbu-total-m">$0.00</div>
+      <div class="hero-aed" id="d-abbu-total-m-aed">AED 0</div>
       <div class="hero-mobile-stats">
         <div class="hms"><div class="hms-label">Invested</div><div class="hms-val" id="d-abbu-invested-m">$0.00</div></div>
         <div class="hms"><div class="hms-label">Current value</div><div class="hms-val" id="d-abbu-value-m">$0.00</div></div>
@@ -375,12 +393,32 @@ select{padding:11px 12px;font-size:14px;font-family:'Inter',sans-serif;border:1p
           <input class="cash-mini-input" type="number" id="cash-abbu-mob" placeholder="0.00" step="0.01" inputmode="decimal" oninput="syncCash('baba',this.value)">
         </div>
       </div>
+      <div class="section-label">🪙 Abbu's precious metals</div>
+      <div class="metals-row">
+        <div class="cash-mini">
+          <div class="cash-mini-label">🥇 Gold (grams)</div>
+          <input class="cash-mini-input" type="number" id="gold-abbu-mob" placeholder="0" step="0.01" inputmode="decimal" oninput="syncMetal('baba','gold_g',this.value)">
+          <div id="gold-abbu-mob-val" style="font-size:11px;color:var(--muted);margin-top:4px">—</div>
+        </div>
+        <div class="cash-mini">
+          <div class="cash-mini-label">🥈 Silver (grams)</div>
+          <input class="cash-mini-input" type="number" id="silver-abbu-mob" placeholder="0" step="0.01" inputmode="decimal" oninput="syncMetal('baba','silver_g',this.value)">
+          <div id="silver-abbu-mob-val" style="font-size:11px;color:var(--muted);margin-top:4px">—</div>
+        </div>
+      </div>
+      <div class="grand-total-card">
+        <div class="gt-label">ABBU'S GRAND TOTAL</div>
+        <div class="gt-value" id="gt-abbu-usd">$0.00</div>
+        <div class="gt-aed" id="gt-abbu-aed">AED 0</div>
+        <div class="gt-breakdown" id="gt-abbu-break">Holdings + Cash + Metals</div>
+      </div>
     </div>
     <!-- DESKTOP -->
     <div class="desktop-only">
       <div class="hero">
         <div class="hero-eyebrow">Abbu's portfolio</div>
         <div class="hero-value" id="d-abbu-total">$0.00</div>
+        <div class="hero-aed" id="d-abbu-total-aed">AED 0</div>
         <div class="hero-sub">Abbu's share across all joint holdings</div>
         <div class="hero-stats">
           <div class="hero-stat"><div class="hs-label">Invested</div><div class="hs-val" id="d-abbu-invested">$0.00</div></div>
@@ -414,6 +452,7 @@ select{padding:11px 12px;font-size:14px;font-family:'Inter',sans-serif;border:1p
     <div class="hero-mobile mobile-only">
       <div class="hero-mobile-label">Combined — You & Abbu</div>
       <div class="hero-mobile-value" id="d-com-total-m">$0.00</div>
+      <div class="hero-aed" id="d-com-total-m-aed">AED 0</div>
       <div class="hero-mobile-stats">
         <div class="hms"><div class="hms-label">Your value</div><div class="hms-val" id="d-com-me-m">$0.00</div></div>
         <div class="hms"><div class="hms-label">Abbu's value</div><div class="hms-val" id="d-com-inv-m">$0.00</div></div>
@@ -425,6 +464,7 @@ select{padding:11px 12px;font-size:14px;font-family:'Inter',sans-serif;border:1p
     <div class="hero desktop-only">
       <div class="hero-eyebrow">Combined — You & Abbu</div>
       <div class="hero-value" id="d-com-total">$0.00</div>
+      <div class="hero-aed" id="d-com-total-aed">AED 0</div>
       <div class="hero-sub">Total investments — you and Abbu combined</div>
       <div class="hero-stats">
         <div class="hero-stat"><div class="hs-label">Your value</div><div class="hs-val" id="d-com-me">$0.00</div></div>
@@ -447,6 +487,18 @@ select{padding:11px 12px;font-size:14px;font-family:'Inter',sans-serif;border:1p
           <div class="cash-mini-label"><div class="avatar av-baba" style="width:18px;height:18px;font-size:8px">AB</div>Abbu</div>
           <input class="cash-mini-input" type="number" id="cash-baba-com-mob" placeholder="0.00" step="0.01" inputmode="decimal" oninput="syncCash('baba',this.value)">
         </div>
+      </div>
+      <div class="section-label">🪙 Precious metals (combined)</div>
+      <div class="metals-summary">
+        <div class="metal-line"><span class="ml-label">🥇 Gold total:</span><span class="ml-val" id="gold-com-total">—</span></div>
+        <div class="metal-line"><span class="ml-label">🥈 Silver total:</span><span class="ml-val" id="silver-com-total">—</span></div>
+        <div class="metals-note" id="metals-com-note">Enter amounts in My portfolio and Abbu's portfolio views</div>
+      </div>
+      <div class="grand-total-card grand-total-combined">
+        <div class="gt-label">GRAND TOTAL — Combined</div>
+        <div class="gt-value" id="gt-com-usd">$0.00</div>
+        <div class="gt-aed" id="gt-com-aed">AED 0</div>
+        <div class="gt-breakdown" id="gt-com-break">Holdings + Cash + Metals (You + Abbu)</div>
       </div>
     </div>
     <!-- DESKTOP person cards -->
@@ -696,9 +748,15 @@ function applyMobileClasses() {
 window.addEventListener('resize', applyMobileClasses);
 let holdings = [], wifeHoldings = [];
 let cashBalances = { me: 0, wife: 0, baba: 0 };
+let metals = { me: { gold_g: 0, silver_g: 0 }, baba: { gold_g: 0, silver_g: 0 } };
+const AED_RATE = 3.673;
+const GRAMS_PER_TROY_OZ = 31.1035;
 
 /* ── FORMATTING ── */
 const usd = n => '$' + Math.abs(n).toLocaleString('en-US', {minimumFractionDigits:2, maximumFractionDigits:2});
+const aed = n => 'AED ' + Math.abs(n * AED_RATE).toLocaleString('en-US', {minimumFractionDigits:0, maximumFractionDigits:0});
+const aedSub = n => '<span style="font-size:11px;color:var(--muted);font-weight:500;margin-left:6px">' + aed(n) + '</span>';
+function gramsToUsd(grams, pricePerOz) { if (!grams || !pricePerOz) return 0; return (grams / GRAMS_PER_TROY_OZ) * pricePerOz; }
 const signed = n => (n >= 0 ? '+' : '−') + usd(n);
 const pct = n => (n >= 0 ? '+' : '') + n.toFixed(2) + '%';
 const sarwaFee = v => Math.max(1, v * 0.0025);
@@ -774,10 +832,129 @@ async function loadFromCloud() {
       holdings = rec.holdings || [];
       wifeHoldings = rec.wifeHoldings || [];
       cashBalances = rec.cashBalances || { me:0, wife:0, baba:0 };
+      metals = rec.metals || { me:{gold_g:0,silver_g:0}, baba:{gold_g:0,silver_g:0} };
+      renderMetals();
       renderHoldings(); renderPartner(); renderMobileCards(); syncAllCashDisplays(); updateDashboard();
       showStorageStatus('Portfolio loaded ✓', 'success');
     }
   } catch(e) { console.warn('Load error:', e); showStorageStatus('Could not load', 'warn'); }
+}
+
+function syncMetal(who, type, val) {
+  if (!metals[who]) metals[who] = { gold_g: 0, silver_g: 0 };
+  metals[who][type] = parseFloat(val) || 0;
+  renderMetals();
+  scheduleSave();
+}
+
+function getMetalPrices() {
+  // Returns {gold: USD per troy oz, silver: USD per troy oz} from cached prices.json
+  const data = _pricesCache;
+  if (!data || !data.metals) return { gold: 0, silver: 0 };
+  return { gold: data.metals.gold || 0, silver: data.metals.silver || 0 };
+}
+
+function renderMetals() {
+  const prices = getMetalPrices();
+  const meGold = metals.me?.gold_g || 0;
+  const meSilver = metals.me?.silver_g || 0;
+  const abbuGold = metals.baba?.gold_g || 0;
+  const abbuSilver = metals.baba?.silver_g || 0;
+
+  // Update input fields (without disrupting active typing)
+  const setIfNot = (id, val) => { const el=$(id); if(el && document.activeElement!==el) el.value = val || ''; };
+  setIfNot('gold-me-mob', meGold);
+  setIfNot('silver-me-mob', meSilver);
+  setIfNot('gold-abbu-mob', abbuGold);
+  setIfNot('silver-abbu-mob', abbuSilver);
+
+  // USD value labels under each input
+  const meGoldUsd = gramsToUsd(meGold, prices.gold);
+  const meSilverUsd = gramsToUsd(meSilver, prices.silver);
+  const abbuGoldUsd = gramsToUsd(abbuGold, prices.gold);
+  const abbuSilverUsd = gramsToUsd(abbuSilver, prices.silver);
+
+  const setMetalLabel = (id, grams, usdVal, hasPrice) => {
+    const el = $(id); if (!el) return;
+    if (!grams) { el.textContent = '—'; return; }
+    if (!hasPrice) { el.textContent = grams.toFixed(2) + 'g · price loading...'; return; }
+    el.textContent = grams.toFixed(2) + 'g ≈ ' + usd(usdVal) + ' · ' + aed(usdVal);
+  };
+  setMetalLabel('gold-me-mob-val', meGold, meGoldUsd, prices.gold > 0);
+  setMetalLabel('silver-me-mob-val', meSilver, meSilverUsd, prices.silver > 0);
+  setMetalLabel('gold-abbu-mob-val', abbuGold, abbuGoldUsd, prices.gold > 0);
+  setMetalLabel('silver-abbu-mob-val', abbuSilver, abbuSilverUsd, prices.silver > 0);
+
+  // Combined view totals
+  const totalGoldG = meGold + abbuGold;
+  const totalSilverG = meSilver + abbuSilver;
+  const totalGoldUsd = gramsToUsd(totalGoldG, prices.gold);
+  const totalSilverUsd = gramsToUsd(totalSilverG, prices.silver);
+  const gct = $('gold-com-total');
+  const sct = $('silver-com-total');
+  if (gct) gct.textContent = totalGoldG > 0 ? totalGoldG.toFixed(2) + 'g · ' + usd(totalGoldUsd) + ' · ' + aed(totalGoldUsd) : '—';
+  if (sct) sct.textContent = totalSilverG > 0 ? totalSilverG.toFixed(2) + 'g · ' + usd(totalSilverUsd) + ' · ' + aed(totalSilverUsd) : '—';
+  const note = $('metals-com-note');
+  if (note) {
+    if (!prices.gold && !prices.silver) note.textContent = 'Metals prices loading from agent...';
+    else if (totalGoldG === 0 && totalSilverG === 0) note.textContent = 'Enter amounts in My portfolio and Abbu\'s portfolio views';
+    else note.style.display = 'none';
+  }
+
+  updateGrandTotals();
+}
+
+function calculatePortfolioValue(who) {
+  // who = 'me' or 'baba'
+  let val = 0;
+  holdings.forEach(h => {
+    const price = h.live || h.buyPrice;
+    const totalVal = h.totalShares * price;
+    if (who === 'me') val += totalVal * (h.mePct / 100);
+    else val += totalVal * (h.invPct / 100);
+  });
+  return val;
+}
+
+function updateGrandTotals() {
+  const prices = getMetalPrices();
+
+  // ME
+  const meHoldings = calculatePortfolioValue('me');
+  const meCash = cashBalances.me || 0;
+  const meGoldUsd = gramsToUsd(metals.me?.gold_g || 0, prices.gold);
+  const meSilverUsd = gramsToUsd(metals.me?.silver_g || 0, prices.silver);
+  const meTotal = meHoldings + meCash + meGoldUsd + meSilverUsd;
+
+  // ABBU
+  const abbuHoldings = calculatePortfolioValue('baba');
+  const abbuCash = cashBalances.baba || 0;
+  const abbuGoldUsd = gramsToUsd(metals.baba?.gold_g || 0, prices.gold);
+  const abbuSilverUsd = gramsToUsd(metals.baba?.silver_g || 0, prices.silver);
+  const abbuTotal = abbuHoldings + abbuCash + abbuGoldUsd + abbuSilverUsd;
+
+  const comTotal = meTotal + abbuTotal;
+
+  setVal('gt-me-usd', usd(meTotal));
+  const gma = $('gt-me-aed'); if (gma) gma.textContent = aed(meTotal);
+  setVal('gt-abbu-usd', usd(abbuTotal));
+  const gaa = $('gt-abbu-aed'); if (gaa) gaa.textContent = aed(abbuTotal);
+  setVal('gt-com-usd', usd(comTotal));
+  const gca = $('gt-com-aed'); if (gca) gca.textContent = aed(comTotal);
+
+  // Breakdown text
+  const fmtBreak = (hold, cash, metalsVal) => 'Holdings ' + usd(hold) + ' + Cash ' + usd(cash) + ' + Metals ' + usd(metalsVal);
+  const gmb = $('gt-me-break'); if (gmb) gmb.textContent = fmtBreak(meHoldings, meCash, meGoldUsd + meSilverUsd);
+  const gab = $('gt-abbu-break'); if (gab) gab.textContent = fmtBreak(abbuHoldings, abbuCash, abbuGoldUsd + abbuSilverUsd);
+
+  // Update hero AED indicators using portfolio-only (not grand total)
+  const setAed = (id, val) => { const el=$(id); if(el) el.textContent = aed(val); };
+  setAed('d-me-total-m-aed', meHoldings);
+  setAed('d-me-total-aed', meHoldings);
+  setAed('d-abbu-total-m-aed', abbuHoldings);
+  setAed('d-abbu-total-aed', abbuHoldings);
+  setAed('d-com-total-m-aed', meHoldings + abbuHoldings);
+  setAed('d-com-total-aed', meHoldings + abbuHoldings);
 }
 
 function scheduleSave() {
@@ -792,7 +969,7 @@ async function saveToCloud() {
     await fetch(`https://api.jsonbin.io/v3/b/${_binId}`, {
       method: 'PUT',
       headers: { 'Content-Type': 'application/json', 'X-Master-Key': JBIN_MASTER },
-      body: JSON.stringify({ holdings, wifeHoldings, cashBalances })
+      body: JSON.stringify({ holdings, wifeHoldings, cashBalances, metals })
     });
     showStorageStatus('Saved ✓', 'success');
   } catch(e) {
@@ -861,6 +1038,8 @@ async function fetchMarket() {
       badge.style.borderColor = isPos ? '#bbf7d0' : '#fecaca';
       badge.style.display = 'flex';
     }
+    // Refresh metals display in case gold/silver prices updated
+    renderMetals();
   } catch(e) {
     console.warn('fetchMarket error:', e);
   }
@@ -1148,6 +1327,7 @@ function updateDashboard() {
   const invNames = [...new Set(holdings.filter(h=>h.invPct>0).map(h=>h.invName))];
   if (invNames.length > 0) { const n=invNames[0]; setVal('d-com-inv-name', n); const av=$('d-com-inv-avatar'); if(av) av.textContent=n[0].toUpperCase(); }
   syncAllCashDisplays();
+  renderMetals();
 }
 
 function updateCombined() {
