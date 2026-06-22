@@ -575,11 +575,26 @@ select{padding:11px 12px;font-size:14px;font-family:'Inter',sans-serif;border:1p
           <input class="cash-mini-input" type="number" id="cash-baba-com-mob" placeholder="0.00" step="0.01" inputmode="decimal" oninput="syncCash('baba',this.value)">
         </div>
       </div>
-      <div class="section-label">🪙 Precious metals (combined)</div>
-      <div class="metals-summary">
-        <div class="metal-line"><span class="ml-label">🥇 Gold total:</span><span class="ml-val" id="gold-com-total">—</span></div>
-        <div class="metal-line"><span class="ml-label">🥈 Silver total:</span><span class="ml-val" id="silver-com-total">—</span></div>
-        <div class="metals-note" id="metals-com-note">Enter amounts in My portfolio and Abbu's portfolio views</div>
+      <div class="section-label">🪙 Precious metals</div>
+      <div style="padding:0 16px 16px;display:flex;flex-direction:column;gap:10px">
+        <div style="background:var(--white);border:1px solid var(--border);border-radius:var(--r);padding:14px 16px">
+          <div style="display:flex;align-items:center;gap:8px;margin-bottom:10px">
+            <div class="avatar av-me" style="width:22px;height:22px;font-size:9px">OS</div>
+            <div style="font-size:12px;font-weight:600;color:var(--muted)">My metals</div>
+          </div>
+          <div class="metal-line"><span class="ml-label">🥇 Gold:</span><span class="ml-val" id="gold-me-com-mob">—</span></div>
+          <div class="metal-line"><span class="ml-label">🥈 Silver:</span><span class="ml-val" id="silver-me-com-mob">—</span></div>
+          <div style="margin-top:8px;padding-top:8px;border-top:1px solid var(--border-lt);display:flex;justify-content:space-between;font-size:13px;font-weight:600"><span>Total:</span><span id="metals-me-com-mob">—</span></div>
+        </div>
+        <div style="background:var(--white);border:1px solid var(--border);border-radius:var(--r);padding:14px 16px">
+          <div style="display:flex;align-items:center;gap:8px;margin-bottom:10px">
+            <div class="avatar av-baba" style="width:22px;height:22px;font-size:9px">AB</div>
+            <div style="font-size:12px;font-weight:600;color:var(--muted)">Abbu's metals</div>
+          </div>
+          <div class="metal-line"><span class="ml-label">🥇 Gold:</span><span class="ml-val" id="gold-abbu-com-mob">—</span></div>
+          <div class="metal-line"><span class="ml-label">🥈 Silver:</span><span class="ml-val" id="silver-abbu-com-mob">—</span></div>
+          <div style="margin-top:8px;padding-top:8px;border-top:1px solid var(--border-lt);display:flex;justify-content:space-between;font-size:13px;font-weight:600"><span>Total:</span><span id="metals-abbu-com-mob">—</span></div>
+        </div>
       </div>
       <div class="grand-total-card grand-total-combined">
         <div class="gt-label">GRAND TOTAL — Combined</div>
@@ -624,11 +639,20 @@ select{padding:11px 12px;font-size:14px;font-family:'Inter',sans-serif;border:1p
       </div>
     </div>
     <div class="cash-section desktop-only">
-      <div class="cash-section-title">🪙 Precious metals (combined)</div>
-      <div style="background:var(--white);border:1px solid var(--border);border-radius:var(--r);padding:16px 18px">
-        <div class="metal-line"><span class="ml-label">🥇 Gold total:</span><span class="ml-val" id="gold-com-total-desk">—</span></div>
-        <div class="metal-line"><span class="ml-label">🥈 Silver total:</span><span class="ml-val" id="silver-com-total-desk">—</span></div>
-        <div class="metals-note" id="metals-com-note-desk" style="text-align:left;margin-top:10px">Enter amounts in My portfolio and Abbu\'s portfolio views</div>
+      <div class="cash-section-title">🪙 Precious metals</div>
+      <div class="cash-grid">
+        <div class="cash-card">
+          <div class="cash-card-header"><div class="avatar av-me">OS</div><div class="cash-card-name">My metals</div></div>
+          <div class="metal-line"><span class="ml-label">🥇 Gold:</span><span class="ml-val" id="gold-me-com-desk">—</span></div>
+          <div class="metal-line"><span class="ml-label">🥈 Silver:</span><span class="ml-val" id="silver-me-com-desk">—</span></div>
+          <div style="margin-top:8px;padding-top:8px;border-top:1px solid var(--border-lt);display:flex;justify-content:space-between;font-size:14px;font-weight:600"><span>Total:</span><span id="metals-me-com-desk">—</span></div>
+        </div>
+        <div class="cash-card">
+          <div class="cash-card-header"><div class="avatar av-baba">B</div><div class="cash-card-name">Abbu's metals</div></div>
+          <div class="metal-line"><span class="ml-label">🥇 Gold:</span><span class="ml-val" id="gold-abbu-com-desk">—</span></div>
+          <div class="metal-line"><span class="ml-label">🥈 Silver:</span><span class="ml-val" id="silver-abbu-com-desk">—</span></div>
+          <div style="margin-top:8px;padding-top:8px;border-top:1px solid var(--border-lt);display:flex;justify-content:space-between;font-size:14px;font-weight:600"><span>Total:</span><span id="metals-abbu-com-desk">—</span></div>
+        </div>
       </div>
     </div>
     <div class="grand-total-card grand-total-combined desktop-only">
@@ -994,16 +1018,27 @@ function renderMetals() {
   const totalSilverG = meSilver + abbuSilver;
   const totalGoldUsd = gramsToUsd(totalGoldG, prices.gold);
   const totalSilverUsd = gramsToUsd(totalSilverG, prices.silver);
-  const goldText = totalGoldG > 0 ? totalGoldG.toFixed(2) + 'g · ' + usd(totalGoldUsd) + ' · ' + aed(totalGoldUsd) : '—';
-  const silverText = totalSilverG > 0 ? totalSilverG.toFixed(2) + 'g · ' + usd(totalSilverUsd) + ' · ' + aed(totalSilverUsd) : '—';
-  ['gold-com-total','gold-com-total-desk'].forEach(id => { const el=$(id); if(el) el.textContent=goldText; });
-  ['silver-com-total','silver-com-total-desk'].forEach(id => { const el=$(id); if(el) el.textContent=silverText; });
-  const note = $('metals-com-note');
-  if (note) {
-    if (!prices.gold && !prices.silver) note.textContent = 'Metals prices loading from agent...';
-    else if (totalGoldG === 0 && totalSilverG === 0) note.textContent = 'Enter amounts in My portfolio and Abbu\'s portfolio views';
-    else note.style.display = 'none';
-  }
+  // Per-person combined view metals breakdown
+  const fmtMetalLine = (grams, usdVal, hasPrice) => {
+    if (!grams) return '—';
+    if (!hasPrice) return grams.toFixed(2) + 'g · price loading...';
+    return grams.toFixed(2) + 'g · ' + usd(usdVal) + ' · ' + aed(usdVal);
+  };
+  const meGoldText = fmtMetalLine(meGold, meGoldUsd, prices.gold > 0);
+  const meSilverText = fmtMetalLine(meSilver, meSilverUsd, prices.silver > 0);
+  const abbuGoldText = fmtMetalLine(abbuGold, abbuGoldUsd, prices.gold > 0);
+  const abbuSilverText = fmtMetalLine(abbuSilver, abbuSilverUsd, prices.silver > 0);
+  const meTotalMetals = meGoldUsd + meSilverUsd;
+  const abbuTotalMetals = abbuGoldUsd + abbuSilverUsd;
+  const meTotalText = meTotalMetals > 0 ? usd(meTotalMetals) + ' · ' + aed(meTotalMetals) : '—';
+  const abbuTotalText = abbuTotalMetals > 0 ? usd(abbuTotalMetals) + ' · ' + aed(abbuTotalMetals) : '—';
+
+  ['gold-me-com-mob','gold-me-com-desk'].forEach(id => { const el=$(id); if(el) el.textContent = meGoldText; });
+  ['silver-me-com-mob','silver-me-com-desk'].forEach(id => { const el=$(id); if(el) el.textContent = meSilverText; });
+  ['gold-abbu-com-mob','gold-abbu-com-desk'].forEach(id => { const el=$(id); if(el) el.textContent = abbuGoldText; });
+  ['silver-abbu-com-mob','silver-abbu-com-desk'].forEach(id => { const el=$(id); if(el) el.textContent = abbuSilverText; });
+  ['metals-me-com-mob','metals-me-com-desk'].forEach(id => { const el=$(id); if(el) el.textContent = meTotalText; });
+  ['metals-abbu-com-mob','metals-abbu-com-desk'].forEach(id => { const el=$(id); if(el) el.textContent = abbuTotalText; });
 
   updateGrandTotals();
 }
