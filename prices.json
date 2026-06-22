@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-06-19T22:37:06.489Z",
+  "updatedAt": "2026-06-22T06:32:24.164Z",
   "market": {
     "symbol": "QQQ",
     "price": 740.62,
@@ -26,8 +26,8 @@
     }
   },
   "metals": {
-    "gold": null,
-    "silver": null,
-    "updated": null
+    "gold": 4196.09,
+    "silver": 66.472,
+    "updated": "2026-06-22T06:32:11.018Z"
   }
 }
