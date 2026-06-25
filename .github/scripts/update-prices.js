@@ -64,10 +64,15 @@ async function main() {
     });
   } else { [...tickers].forEach(t => errors.push(t)); console.error('Tiingo failed:', tiingoRes.status); }
 
-  // 4. Metals (gold + silver) from metals.dev
-  console.log('\n3. Fetching metals from metals.dev...');
+  // 4. Metals (gold + silver) from metals.dev — only on the hour to save API calls
+  console.log('\n3. Checking metals fetch...');
+  const currentMinute = new Date().getUTCMinutes();
+  const shouldFetchMetals = currentMinute < 5; // Only fetch in first 5 min of each hour
+  console.log(`Current UTC minute: ${currentMinute} — ${shouldFetchMetals ? 'Fetching metals' : 'Skipping metals (not on the hour)'}`);
+
   let metalPrices = { gold: null, silver: null, updated: null };
-  if (METALS_KEY) {
+
+  if (shouldFetchMetals && METALS_KEY) {
     try {
       const metalRes = await fetchJson(
         `https://api.metals.dev/v1/latest?api_key=${METALS_KEY}&currency=USD&unit=toz`,
@@ -86,8 +91,24 @@ async function main() {
     } catch(e) {
       console.error('metals.dev error:', e.message);
     }
-  } else {
+  } else if (!METALS_KEY) {
     console.warn('METALS_KEY not set — skipping metals fetch');
+  }
+
+  // If not fetching metals this run, load existing prices from JSONBin to preserve last known values
+  if (!shouldFetchMetals) {
+    try {
+      const existingRes = await fetchJson(
+        `https://api.jsonbin.io/v3/b/${PRICES_BIN_ID}/latest`,
+        { method: 'GET', headers: { 'X-Master-Key': JSONBIN_KEY } }
+      );
+      if (existingRes.status === 200 && existingRes.body?.record?.metals) {
+        metalPrices = existingRes.body.record.metals;
+        console.log(`Using cached metals: Gold $${metalPrices.gold}, Silver $${metalPrices.silver}`);
+      }
+    } catch(e) {
+      console.warn('Could not load cached metals:', e.message);
+    }
   }
 
   // 5. Market summary
