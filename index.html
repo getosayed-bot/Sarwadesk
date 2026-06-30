@@ -1328,26 +1328,8 @@ async function addPartnerHolding() {
 
 /* ── RENDER WIFE HOLDINGS ── */
 function renderPartner() {
-  const tb = $('partner-tbody');
-  $('p-count').textContent = wifeHoldings.length + ' position' + (wifeHoldings.length !== 1 ? 's' : '');
-  if (!wifeHoldings.length) { tb.innerHTML = '<tr><td colspan="8"><div class="empty-state">No wife holdings yet</div></td></tr>'; updatePartnerHero(); return; }
-  let totInvested = 0, totVal = 0;
-  tb.innerHTML = wifeHoldings.map((h, i) => {
-    const price = h.live || h.buy, val = h.shares * price, cost = h.shares * h.buy, pnl = val - cost, ret = cost > 0 ? (pnl/cost)*100 : 0;
-    totInvested += cost; totVal += val;
-    const liveCell = h.live ? `<span class="live-dot"></span><span class="mono">${usd(h.live)}</span>` : `<span class="mono">${usd(h.buy)}</span>`;
-    return `<tr>
-      <td><div class="ticker-sym">${h.ticker}</div><div class="ticker-name">${h.name}</div></td>
-      <td class="r mono">${h.shares.toFixed(4)}</td>
-      <td class="r mono">${usd(h.buy)}</td>
-      <td class="r">${liveCell}</td>
-      <td class="r mono">${usd(val)}</td>
-      <td class="r"><span class="${colorClass(pnl)} mono">${signed(pnl)}</span></td>
-      <td class="r"><span class="pill ${pnl>=0?'pill-pos':'pill-neg'}">${pct(ret)}</span></td>
-      <td><button class="btn-icon" onclick="wifeHoldings.splice(${i},1);renderPartner();scheduleSave()">✕</button></td>
-    </tr>`;
-  }).join('');
-  updatePartnerHero(totVal, totInvested);
+  // Partner/wife page removed - no-op to avoid breaking loadFromCloud
+  updatePartnerHero();
 }
 
 function updatePartnerHero(val, invested) {
