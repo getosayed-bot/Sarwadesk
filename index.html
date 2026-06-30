@@ -873,6 +873,7 @@ window.addEventListener('resize', applyMobileClasses);
 let holdings = [], wifeHoldings = [];
 let cashBalances = { me: 0, wife: 0, baba: 0 };
 let metals = { me: { gold_g: 0, silver_g: 0 }, baba: { gold_g: 0, silver_g: 0 } };
+let _hasLoaded = false; // Safety flag - prevents saving empty data over real data
 const AED_RATE = 3.673;
 const GRAMS_PER_TROY_OZ = 31.1035;
 
@@ -957,6 +958,7 @@ async function loadFromCloud() {
       wifeHoldings = rec.wifeHoldings || [];
       cashBalances = rec.cashBalances || { me:0, wife:0, baba:0 };
       metals = rec.metals || { me:{gold_g:0,silver_g:0}, baba:{gold_g:0,silver_g:0} };
+      _hasLoaded = true; // Mark load successful - safe to save now
       renderMetals();
       renderHoldings(); renderPartner(); renderMobileCards(); syncAllCashDisplays(); updateDashboard();
       showStorageStatus('Portfolio loaded ✓', 'success');
@@ -1103,6 +1105,11 @@ function scheduleSave() {
 
 async function saveToCloud() {
   if (!_binId) return;
+  if (!_hasLoaded) {
+    console.warn('Blocking save - load did not complete successfully');
+    showStorageStatus('Save blocked (load failed)', 'warn');
+    return;
+  }
   try {
     showStorageStatus('Saving...', 'saving');
     await fetch(`https://api.jsonbin.io/v3/b/${_binId}`, {
