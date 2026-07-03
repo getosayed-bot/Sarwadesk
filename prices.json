@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-07-03T17:15:14.913Z",
+  "updatedAt": "2026-07-03T17:20:18.259Z",
   "market": {
     "symbol": "QQQ",
     "price": 712.6,
@@ -10,18 +10,18 @@
     "low": 707.56
   },
   "prices": {
-    "TSM": {
-      "price": 434.16,
-      "prevClose": 444.23,
-      "high": 461.47,
-      "low": 429.5,
-      "timestamp": "2026-07-02T20:00:00+00:00"
-    },
     "QQQ": {
       "price": 712.6,
       "prevClose": 725.17,
       "high": 730.83,
       "low": 707.56,
+      "timestamp": "2026-07-02T20:00:00+00:00"
+    },
+    "TSM": {
+      "price": 434.16,
+      "prevClose": 444.23,
+      "high": 461.47,
+      "low": 429.5,
       "timestamp": "2026-07-02T20:00:00+00:00"
     },
     "AMD": {
