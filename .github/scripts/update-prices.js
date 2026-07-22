@@ -67,7 +67,7 @@ async function main() {
   // 4. Metals (gold + silver) from metals.dev — only on the hour to save API calls
   console.log('\n3. Checking metals fetch...');
   const currentMinute = new Date().getUTCMinutes();
-  const shouldFetchMetals = true; // TEMP: forced to run every time for debugging
+  const shouldFetchMetals = currentMinute < 5; // Only fetch in first 5 min of each hour
   console.log(`Current UTC minute: ${currentMinute} — ${shouldFetchMetals ? 'Fetching metals' : 'Skipping metals (not on the hour)'}`);
 
   let metalPrices = { gold: null, silver: null, updated: null };
