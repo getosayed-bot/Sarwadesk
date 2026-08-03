@@ -1,40 +1,40 @@
 {
-  "updatedAt": "2026-08-03T09:36:11.181Z",
+  "updatedAt": "2026-08-03T13:00:25.903Z",
   "market": {
     "symbol": "QQQ",
-    "price": 687.99,
-    "prevClose": 683.55,
-    "change": 4.440000000000055,
-    "changePct": 0.6495501426377083,
-    "high": 695.77,
-    "low": 680.0512
+    "price": 689.855,
+    "prevClose": 687.99,
+    "change": 1.865000000000009,
+    "changePct": 0.27107952150467435,
+    "high": 689.945,
+    "low": 687.63
   },
   "prices": {
-    "AMD": {
-      "price": 476.15,
-      "prevClose": 485.39,
-      "high": 515.62,
-      "low": 475.76,
-      "timestamp": "2026-07-31T20:00:00+00:00"
-    },
     "QQQ": {
-      "price": 687.99,
-      "prevClose": 683.55,
-      "high": 695.77,
-      "low": 680.0512,
-      "timestamp": "2026-07-31T20:00:00+00:00"
+      "price": 689.855,
+      "prevClose": 687.99,
+      "high": 689.945,
+      "low": 687.63,
+      "timestamp": "2026-08-03T08:44:38.076181862-04:00"
     },
     "TSM": {
-      "price": 404.25,
-      "prevClose": 403.31,
-      "high": 420.35,
-      "low": 398.8,
-      "timestamp": "2026-07-31T20:00:00+00:00"
+      "price": 399.16,
+      "prevClose": 404.25,
+      "high": 399.16,
+      "low": 396.19,
+      "timestamp": "2026-08-03T08:50:22.111044661-04:00"
+    },
+    "AMD": {
+      "price": 463.9,
+      "prevClose": 476.15,
+      "high": 465.59,
+      "low": 462.12,
+      "timestamp": "2026-08-03T08:59:57.600330178-04:00"
     }
   },
   "metals": {
-    "gold": null,
-    "silver": null,
-    "updated": null
+    "gold": 4047.175,
+    "silver": 57.45,
+    "updated": "2026-08-03T12:59:05.164Z"
   }
 }
