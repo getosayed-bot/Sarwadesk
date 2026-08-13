@@ -934,31 +934,27 @@ function initPinLock() {
   }
 }
 
-/* ── CLOUD STORAGE (JSONBin) ── */
-const JBIN_MASTER = '$2a$10$74I7jJfeWcf8SoJm6jOQtedJwnaONH.yLfZzjo75/hxAOI4zYKJZK';
-const JBIN_KEY_NAME = 'sarwadesk_bin_id';
-let _binId = '';
+/* ── CLOUD STORAGE (Supabase) ── */
+const SUPABASE_URL = 'https://nwonczhvgwyiexnmpkdm.supabase.co';
+const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im53b25jemh2Z3d5aWV4bm1wa2RtIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODY2NDEyMDIsImV4cCI6MjEwMjIxNzIwMn0.4qcG4XbJHClJRokMRyh-ilpK1K60yrTL-cL8WrkswaI';
+const SB_HEADERS = { 'apikey': SUPABASE_ANON_KEY, 'Authorization': 'Bearer ' + SUPABASE_ANON_KEY, 'Content-Type': 'application/json' };
 let _saveTimer = null;
 
 async function initStorage() {
-  // Bin ID hardcoded — no dynamic creation needed
-  _binId = '6a33bb68f5f4af5e29079fb0';
-  try { localStorage.setItem(JBIN_KEY_NAME, _binId); } catch(e) {}
   await loadFromCloud();
 }
 
 async function loadFromCloud() {
-  if (!_binId) return;
   try {
-    const r = await fetch(`https://api.jsonbin.io/v3/b/${_binId}/latest`, { headers: { 'X-Master-Key': JBIN_MASTER } });
-    const d = await r.json();
-    const rec = d?.record;
+    const r = await fetch(`${SUPABASE_URL}/rest/v1/portfolio?id=eq.default&select=*`, { headers: SB_HEADERS });
+    if (!r.ok) throw new Error('Supabase ' + r.status);
+    const rows = await r.json();
+    const rec = rows[0];
     if (rec) {
       holdings = rec.holdings || [];
-      wifeHoldings = rec.wifeHoldings || [];
-      cashBalances = rec.cashBalances || { me:0, wife:0, baba:0 };
+      cashBalances = rec.cash_balances || { me:0, wife:0, baba:0 };
       metals = rec.metals || { me:{gold_g:0,silver_g:0}, baba:{gold_g:0,silver_g:0} };
-      _hasLoaded = true; // Mark load successful - safe to save now
+      _hasLoaded = true;
       renderMetals();
       renderHoldings(); renderPartner(); renderMobileCards(); syncAllCashDisplays(); updateDashboard();
       showStorageStatus('Portfolio loaded ✓', 'success');
@@ -1104,7 +1100,6 @@ function scheduleSave() {
 }
 
 async function saveToCloud() {
-  if (!_binId) return;
   if (!_hasLoaded) {
     console.warn('Blocking save - load did not complete successfully');
     showStorageStatus('Save blocked (load failed)', 'warn');
@@ -1112,13 +1107,15 @@ async function saveToCloud() {
   }
   try {
     showStorageStatus('Saving...', 'saving');
-    await fetch(`https://api.jsonbin.io/v3/b/${_binId}`, {
-      method: 'PUT',
-      headers: { 'Content-Type': 'application/json', 'X-Master-Key': JBIN_MASTER },
-      body: JSON.stringify({ holdings, wifeHoldings, cashBalances, metals })
+    const r = await fetch(`${SUPABASE_URL}/rest/v1/portfolio?id=eq.default`, {
+      method: 'PATCH',
+      headers: { ...SB_HEADERS, 'Prefer': 'return=minimal' },
+      body: JSON.stringify({ holdings, cash_balances: cashBalances, metals, updated_at: new Date().toISOString() })
     });
+    if (!r.ok) throw new Error('Supabase ' + r.status);
     showStorageStatus('Saved ✓', 'success');
   } catch(e) {
+    console.warn('Save failed:', e);
     showStorageStatus('Save failed', 'warn');
     _saveTimer = setTimeout(saveToCloud, 3000);
   }
@@ -1146,18 +1143,11 @@ async function loadPricesJson() {
   const now = Date.now();
   if (_pricesCache && (now - _pricesCacheTime) < 60000) return _pricesCache;
   try {
-    const r = await fetch('https://api.jsonbin.io/v3/b/6a33bfd4da38895dfed6349f/latest', {
-      headers: { 'X-Master-Key': '$2a$10$74I7jJfeWcf8SoJm6jOQtedJwnaONH.yLfZzjo75/hxAOI4zYKJZK' }
-    });
-    if (!r.ok) throw new Error('Prices bin error: ' + r.status);
-    const d = await r.json();
-    const data = d?.record || d;
+    const r = await fetch(`${SUPABASE_URL}/rest/v1/prices?id=eq.default&select=data`, { headers: SB_HEADERS });
+    if (!r.ok) throw new Error('Prices error: ' + r.status);
+    const rows = await r.json();
+    const data = rows[0]?.data || {};
     _pricesCache = data; _pricesCacheTime = now;
-    const el = $('last-updated');
-    if (el && data.updatedAt) {
-      const dt = new Date(data.updatedAt);
-      el.textContent = 'Updated ' + dt.toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'});
-    }
     return data;
   } catch(e) { console.warn('loadPricesJson error:', e.message); return null; }
 }
