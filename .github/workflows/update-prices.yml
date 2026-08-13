@@ -1,9 +1,9 @@
-# SarwaDesk price updater — triggered externally via cron-job.org
+# SarwaDesk price updater — migrated to Supabase
 name: Update Stock Prices
 on:
   workflow_dispatch:
 permissions:
-  contents: write
+  contents: read
 concurrency:
   group: prices
   cancel-in-progress: false
@@ -13,23 +13,11 @@ jobs:
     steps:
       - name: Checkout repo
         uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
-          token: ${{ secrets.GITHUB_TOKEN }}
       - name: Fetch prices and update
         env:
           TIINGO_KEY: ${{ secrets.TIINGO_KEY }}
-          JSONBIN_KEY: ${{ secrets.JSONBIN_KEY }}
-          JSONBIN_BIN_ID: ${{ secrets.JSONBIN_BIN_ID }}
           METALS_KEY: ${{ secrets.METALS_KEY }}
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_SERVICE_KEY: ${{ secrets.SUPABASE_SERVICE_KEY }}
         run: |
           node .github/scripts/update-prices.js
-      - name: Commit updated prices
-        run: |
-          git config user.name "SarwaDesk Bot"
-          git config user.email "bot@sarwadesk"
-          git fetch origin main
-          git checkout main
-          git add prices.json
-          git diff --staged --quiet || git commit -m "prices $(date -u '+%H:%M UTC')"
-          git push origin main --force-with-lease
