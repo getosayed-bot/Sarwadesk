@@ -313,6 +313,8 @@ select{padding:11px 12px;font-size:14px;font-family:'Inter',sans-serif;border:1p
       <span style="font-size:10px;color:var(--muted);font-weight:500">NASDAQ</span>
       <span id="nasdaq-pct-badge">—</span>
     </div>
+    <button class="refresh-btn" onclick="downloadBackup()" title="Download backup">💾 Backup</button>
+    <button class="refresh-btn" onclick="restoreBackup()" title="Restore from backup file">↥ Restore</button>
     <button class="refresh-btn" onclick="refreshAll()">↻ Refresh</button>
   </div>
 </div>
@@ -1469,6 +1471,59 @@ function syncAllCashDisplays() {
   const mt=$('cash-me-total'); if(mt) mt.textContent=usdFmt(cashBalances.me+cashBalances.baba);
   const ct=$('cash-com-total'); if(ct) ct.textContent=usdFmt(cashBalances.me+cashBalances.baba);
   scheduleSave();
+}
+
+/* ── BACKUP ── */
+function downloadBackup() {
+  const backup = {
+    exportedAt: new Date().toISOString(),
+    holdings,
+    cashBalances,
+    metals,
+    note: 'SarwaDesk portfolio backup - keep this file safe'
+  };
+  const blob = new Blob([JSON.stringify(backup, null, 2)], { type: 'application/json' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  const stamp = new Date().toISOString().slice(0, 19).replace(/[:]/g, '-');
+  a.href = url;
+  a.download = `sarwadesk-backup-${stamp}.json`;
+  a.click();
+  URL.revokeObjectURL(url);
+  showStorageStatus('Backup downloaded ✓', 'success');
+}
+
+function restoreBackup() {
+  const input = document.createElement('input');
+  input.type = 'file';
+  input.accept = 'application/json,.json';
+  input.onchange = async (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+    if (!confirm('This will REPLACE all current data with the backup. Continue?')) return;
+    try {
+      const text = await file.text();
+      const data = JSON.parse(text);
+      if (!data.holdings || !data.cashBalances || !data.metals) {
+        alert('Invalid backup file - missing required fields');
+        return;
+      }
+      holdings = data.holdings;
+      cashBalances = data.cashBalances;
+      metals = data.metals;
+      renderHoldings();
+      renderMobileCards();
+      syncAllCashDisplays();
+      renderMetals();
+      updateDashboard();
+      scheduleSave();
+      showStorageStatus('Backup restored ✓', 'success');
+      alert('Backup restored successfully!');
+    } catch(err) {
+      alert('Failed to restore: ' + err.message);
+    }
+  };
+  input.click();
 }
 
 /* ── REFRESH ── */
