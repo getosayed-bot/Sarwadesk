@@ -1,10 +1,9 @@
 const https = require('https');
 
 const TIINGO_KEY = process.env.TIINGO_KEY;
-const JSONBIN_KEY = process.env.JSONBIN_KEY;
-const JSONBIN_BIN_ID = process.env.JSONBIN_BIN_ID;
 const METALS_KEY = process.env.METALS_KEY;
-const PRICES_BIN_ID = '6a33bfd4da38895dfed6349f';
+const SUPABASE_URL = process.env.SUPABASE_URL;
+const SUPABASE_SERVICE_KEY = process.env.SUPABASE_SERVICE_KEY;
 
 function fetchJson(url, options = {}, body = null) {
   return new Promise((resolve, reject) => {
@@ -22,29 +21,32 @@ function fetchJson(url, options = {}, body = null) {
   });
 }
 
+const SB_HEADERS = {
+  'apikey': SUPABASE_SERVICE_KEY,
+  'Authorization': 'Bearer ' + SUPABASE_SERVICE_KEY,
+  'Content-Type': 'application/json'
+};
+
 async function main() {
   console.log('=== SarwaDesk Price Update ===', new Date().toISOString());
 
-  // 1. Load portfolio
-  console.log('\n1. Loading portfolio...');
-  const binRes = await fetchJson(
-    `https://api.jsonbin.io/v3/b/${JSONBIN_BIN_ID}/latest`,
-    { method: 'GET', headers: { 'X-Master-Key': JSONBIN_KEY } }
+  // 1. Load portfolio from Supabase
+  console.log('\n1. Loading portfolio from Supabase...');
+  const portRes = await fetchJson(
+    `${SUPABASE_URL}/rest/v1/portfolio?id=eq.default&select=holdings`,
+    { method: 'GET', headers: SB_HEADERS }
   );
-  if (binRes.status !== 200) { console.error('JSONBin error:', JSON.stringify(binRes.body)); process.exit(1); }
+  if (portRes.status !== 200) { console.error('Supabase portfolio error:', portRes.status, JSON.stringify(portRes.body)); process.exit(1); }
 
-  const record = binRes.body?.record || {};
-  const myHoldings = record.holdings || [];
-  const wifeHoldings = record.wifeHoldings || [];
-  console.log(`Holdings: ${myHoldings.length} mine, ${wifeHoldings.length} wife`);
+  const myHoldings = portRes.body[0]?.holdings || [];
+  console.log(`Holdings: ${myHoldings.length}`);
 
-  // 2. Tickers
+  // 2. Collect tickers
   const tickers = new Set(['QQQ']);
   myHoldings.forEach(h => h.ticker && tickers.add(h.ticker.toUpperCase()));
-  wifeHoldings.forEach(h => h.ticker && tickers.add(h.ticker.toUpperCase()));
   console.log('Tickers:', [...tickers].join(', '));
 
-  // 3. Tiingo stocks
+  // 3. Fetch stocks from Tiingo
   console.log('\n2. Fetching stocks from Tiingo...');
   const tickerStr = [...tickers].join(',');
   const tiingoRes = await fetchJson(
@@ -64,10 +66,10 @@ async function main() {
     });
   } else { [...tickers].forEach(t => errors.push(t)); console.error('Tiingo failed:', tiingoRes.status); }
 
-  // 4. Metals (gold + silver) from metals.dev — only on the hour to save API calls
+  // 4. Metals - only on the hour (minute 0-4)
   console.log('\n3. Checking metals fetch...');
   const currentMinute = new Date().getUTCMinutes();
-  const shouldFetchMetals = currentMinute < 5; // Only fetch in first 5 min of each hour
+  const shouldFetchMetals = currentMinute < 5;
   console.log(`Current UTC minute: ${currentMinute} — ${shouldFetchMetals ? 'Fetching metals' : 'Skipping metals (not on the hour)'}`);
 
   let metalPrices = { gold: null, silver: null, updated: null };
@@ -83,35 +85,35 @@ async function main() {
         metalPrices.gold = metalRes.body.metals.gold || null;
         metalPrices.silver = metalRes.body.metals.silver || null;
         metalPrices.updated = metalRes.body.timestamps?.metal || new Date().toISOString();
-        console.log(`✓ Gold (XAU/USD per troy oz): $${metalPrices.gold}`);
-        console.log(`✓ Silver (XAG/USD per troy oz): $${metalPrices.silver}`);
+        console.log(`✓ Gold: $${metalPrices.gold}, Silver: $${metalPrices.silver}`);
       } else {
         console.warn('metals.dev returned no data:', JSON.stringify(metalRes.body).slice(0, 300));
       }
     } catch(e) {
       console.error('metals.dev error:', e.message);
     }
-  } else if (!METALS_KEY) {
-    console.warn('METALS_KEY not set — skipping metals fetch');
   }
 
-  // If not fetching metals this run, load existing prices from JSONBin to preserve last known values
-  if (!shouldFetchMetals) {
+  // Preserve cached metals if we skipped this run OR the fetch failed
+  if (!shouldFetchMetals || (metalPrices.gold === null && metalPrices.silver === null)) {
     try {
       const existingRes = await fetchJson(
-        `https://api.jsonbin.io/v3/b/${PRICES_BIN_ID}/latest`,
-        { method: 'GET', headers: { 'X-Master-Key': JSONBIN_KEY } }
+        `${SUPABASE_URL}/rest/v1/prices?id=eq.default&select=data`,
+        { method: 'GET', headers: SB_HEADERS }
       );
-      if (existingRes.status === 200 && existingRes.body?.record?.metals) {
-        metalPrices = existingRes.body.record.metals;
-        console.log(`Using cached metals: Gold $${metalPrices.gold}, Silver $${metalPrices.silver}`);
+      if (existingRes.status === 200 && existingRes.body[0]?.data?.metals) {
+        const cached = existingRes.body[0].data.metals;
+        if (cached.gold) {
+          metalPrices = cached;
+          console.log(`Using cached metals: Gold $${metalPrices.gold}, Silver $${metalPrices.silver}`);
+        }
       }
     } catch(e) {
       console.warn('Could not load cached metals:', e.message);
     }
   }
 
-  // 5. Market summary
+  // 5. Build final data
   const qqq = prices['QQQ'] || {};
   const change = qqq.price && qqq.prevClose ? qqq.price - qqq.prevClose : null;
   const output = {
@@ -130,18 +132,17 @@ async function main() {
     errors: errors.length ? errors : undefined
   };
 
-  // 6. Save to JSONBin
-  console.log('\n4. Saving to prices bin...');
+  // 6. Save to Supabase prices table
+  console.log('\n4. Saving to Supabase prices table...');
   const saveRes = await fetchJson(
-    `https://api.jsonbin.io/v3/b/${PRICES_BIN_ID}`,
-    { method: 'PUT', headers: { 'Content-Type': 'application/json', 'X-Master-Key': JSONBIN_KEY } },
-    JSON.stringify(output)
+    `${SUPABASE_URL}/rest/v1/prices?id=eq.default`,
+    { method: 'PATCH', headers: { ...SB_HEADERS, 'Prefer': 'return=minimal' } },
+    JSON.stringify({ data: output, updated_at: new Date().toISOString() })
   );
-  if (saveRes.status === 200) { console.log('✓ Saved to JSONBin'); }
-  else { console.error('Save failed:', JSON.stringify(saveRes.body)); process.exit(1); }
+  if (saveRes.status === 204 || saveRes.status === 200) { console.log('✓ Saved to Supabase'); }
+  else { console.error('Save failed:', saveRes.status, JSON.stringify(saveRes.body)); process.exit(1); }
 
-  require('fs').writeFileSync('prices.json', JSON.stringify(output, null, 2));
-  console.log('\n=== Done ===', Object.keys(prices).length, 'stocks +', (metalPrices.gold?'gold':''), (metalPrices.silver?'silver':''), 'fetched');
+  console.log('\n=== Done ===', Object.keys(prices).length, 'stocks +', (metalPrices.gold?'gold ':''), (metalPrices.silver?'silver':''), 'saved');
 }
 
 main().catch(e => { console.error('Fatal:', e.message); process.exit(1); });
